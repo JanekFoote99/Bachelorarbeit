@@ -1,0 +1,24 @@
+\section{Einführung}
+
+In der Computergrafik ist die Erzeugung eines Dreiecksnetzes eine gängige Methode zur Generierung von 3D-Modellen. Diese Modelle können in Topologie und Geometrie unterteilt werden. Für die Geometrie werden verschiedene Attribute benötigt. 
+So werden die Positionen, die Normalenvektoren und Texturekoordinaten/Farbwerte für jeden Punkt des Dreiecksnetzes in single-precision floating point values (32 Bit Gleitkommazahlen) gespeichert. 
+Für die korrekte Annordung und Reihenfolge der Knotenpunkte ist die Topologie zuständig. 
+Dabei ist die Datenkompression ein entscheidendes Thema. 
+In einer Welt, in der digitale Daten schon lange ein wichtiges Thema sind, und dennoch immer weiter an Bedeutung gewinnen, ist die effiziente Speicherung und Übertragung ein wichtiger Gesichtspunkt.
+3D Modelle werden so gut wie überall benötigt. Videospiele und Animationsserien wären ohne nicht vorstellbar. Architekten können Ihre Ideen auch ohne Bleistift aufs Papier (oder eher auf den Bildschirm) bringen. Selbst im Ikea kann die Couch die einem Gefällt an einem Tablet Editor weiter konfiguriert werden.
+Künstler wollen Modelle erschaffen, die den Eindruck gewinnen wollen, Realitätsgetreu zu sein. 
+Die Folge davon ist, das diese Modelle stetiger komplexer werden, und somit ein größerer Speicheraufwand benötigt wird. 
+Um dem Entgegenzuwirken gibt es Möglichkeiten, um digitale Signale zu komprimieren. 
+Ursprünglich entwickelt zur Repräsentation von Daten wurde der Morse Code zu einem der wichtigsten Werkzeuge für die Kommunikation des 19. Jahrhunderts. Bestehend aus zwei Grundbausteinen, einem kurzen und einem langen Signal, konnten einzelne Buchstaben kodiert werden. Erweitert man dieses Alphabet mit einem weiteren \glqq Symbol\grqq\ , einer Pause die zwischen den Signalsequenzen können ganze Sätze übermittelt werden. Das bekannteste Werkzeug für den Morse Code ist der Telegraph, mit dem diese Signale über weite Strecken übertragen werden konnten.
+Die Erfindung des Morsecodes findet im 21. Jahrhundert nicht nur seinen Zweck in dramatischen Momenten des in Film und Fernsehens. Es war zeitgleich ein früher und großer Meilenstein in für die Kompression einer Datenquelle (in diesem Fall das Alphabet). Durch Untersuchungen einer großen Anzahl an Literatur kann eine Buchstabenhäufigkeit berechnet werden. Diese sagt aus, wie Wahrscheinlich es ist, welcher Buchstabe in einem Text folgt, ohne den aktuellen Kontext zu betrachten (beispielsweise vorherige Buchstaben). Da diese Häufigkeiten abhängig vom Alphabet sind, sollten diese nicht übergreifend verwendet werden. So sind die Buchstaben \glqq E\grqq\ und \glqq T\grqq\ die Buchstaben im Englischen Alphabet, welche die höchste Auftrittswahrscheinlichkeit besitzen. 
+%Datenkompression problem ausführen: durch ein stop Signal geht eine wichtige Eigenschaft verloren (eventuell binär)
+Der Ursprung der Datenkompression ist zu der Weiterentwicklung des Morse Codes zurückzuführen. 
+Morse Code ist eine Form der Huffman Codierung
+
+\subsection{Steigende Komplexität}
+\label{subsec:steigende_komplexität}
+Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, wodurch die Anforderungen an der Hardware steigen. In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen. Der Wunsch nach realistischeren Modellen in der Animationsfilm und Videospielbranche hat die Dreiecksanzahl von 3D Modellen in die Höhe schießen lassen. 
+
+\subsection{Kompression}
+Brotli
+BrotliG

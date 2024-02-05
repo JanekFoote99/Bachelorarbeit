@@ -1,0 +1,64 @@
+% Encoding: UTF-8
+
+@Article{Jakob2017,
+  author   = {Jakob, Johannes and Buchenau, Christoph and Guthe, Michael},
+  journal  = {Computer Graphics Forum},
+  title    = {A Parallel Approach to Compression and Decompression of Triangle Meshes using the GPU},
+  year     = {2017},
+  number   = {5},
+  pages    = {71-80},
+  volume   = {36},
+  abstract = {Abstract Most state-of-the-art compression algorithms use complex connectivity traversal and prediction schemes, which are not efficient enough for online compression of large meshes. In this paper we propose a scalable massively parallel approach for compression and decompression of large triangle meshes using the GPU. Our method traverses the input mesh in a parallel breadth-first manner and encodes the connectivity data similarly to the well known cut-border machine. Geometry data is compressed using a local prediction strategy. In contrast to the original cut-border machine, we can additionally handle triangle meshes with inconsistently oriented faces. Our approach is more than one order of magnitude faster than currently used methods and achieves competitive compression rates.},
+  doi      = {https://doi.org/10.1111/cgf.13246},
+  eprint   = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/cgf.13246},
+  keywords = {Categories and Subject Descriptors (according to ACM CCS), I.3.6 Computer Graphics: Methodology and Techniques—Graphics data structures and data types, I.3.5 Computer Graphics: Computational Geometry and Object Modeling—Geometric algorithms, languages, and systems, I.3.1 Computer Graphics: Hardware Architecture—Parallel processing},
+  url      = {https://onlinelibrary.wiley.com/doi/abs/10.1111/cgf.13246},
+}
+
+@Article{Kubisch2018,
+  author = {Christoph Kubisch},
+  title  = {Introduction to Turing Mesh Shaders},
+  year   = {2018},
+  url    = {https://developer.nvidia.com/blog/introduction-turing-mesh-shaders/#entry-content-comments},
+}
+
+@Article{Kapoulkine2023,
+  author = {Arseny Kapoulkine},
+  title  = {Meshlet size tradeoffs},
+  year   = {2023},
+  url    = {https://zeux.io/2023/01/16/meshlet-size-tradeoffs/},
+}
+
+@Article{Burgess2020,
+  author   = {Burgess, John},
+  journal  = {IEEE Micro},
+  title    = {RTX on—The NVIDIA Turing GPU},
+  year     = {2020},
+  number   = {2},
+  pages    = {36-44},
+  volume   = {40},
+  doi      = {10.1109/MM.2020.2971677},
+  keywords = {Graphics processing units;Ray tracing;Tensors;Multiprocessors;Random access memory;Deep learning;Instruction sets;I.3.1.a Graphics processors < I.3.1 Hardware Architecture < I.3 Computer Graphics < I Computing Methodologies;C.1.2.i TC scheduling and synchronization < C.1.2 Multiple Data Stream Architectures (Multiprocessors) < C.1 Processor Architect;C.1.4.e Multi-core/single-chip multiprocessors < C.1.4 Parallel Architectures < C.1 Processor Architectures < C Computer Systems;Deep learning;Ray tracing;GPU;Turing;Tensor Core;RTCore;SIMT},
+}
+
+@Article{Carvalho2022,
+  author = {Miguel Ângelo Abreu de Carvalho},
+  title  = {Exploring Mesh Shaders},
+  year   = {2022},
+}
+
+@InBook{Ilett2022,
+  author    = {Ilett, Daniel},
+  pages     = {517--582},
+  publisher = {Apress},
+  title     = {Advanced Shaders},
+  year      = {2022},
+  address   = {Berkeley, CA},
+  isbn      = {978-1-4842-8652-4},
+  abstract  = {So far, we have primarily discussed vertex and fragment shaders that take meshes, transform their vertices onto the screen, and color the pixels. Most shaders take this form. We've already seen the power of these types of shaders and the broad range of capabilities they have, but they are not the only types of shaders. In the shader pipeline, there are two optional stages that we have not yet encountered: the tessellation shader and the geometry shader. On top of that, there are compute shaders, which operate outside the usual mesh shading pipeline and can be used for arbitrary calculations on the GPU. In this chapter, we will explore some of these strange and exotic new types of shaders and add ever-powerful new tools to our box of tricks.},
+  booktitle = {Building Quality Shaders for Unity®: Using Shader Graphs and HLSL Shaders},
+  doi       = {10.1007/978-1-4842-8652-4_12},
+  url       = {https://doi.org/10.1007/978-1-4842-8652-4_12},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}

@@ -1,0 +1,40 @@
+\section{Grundlagen}
+
+test \ldots
+
+\subsection{Compute Shader}
+\label{subsec:compute_shader}
+Compute Shader sind kein fester Bestandteil der Rendering Pipeline.
+Sie dienen als ..., um auf der GPU Operationen performant auszuführen, die auf CPU Ebene länger brauchen würde.
+Compute Shader blablabla
+Um das SIMD Konzept des Compute Shaders zu verstehen sind zwei Variablen elementar wichtig.
+SVGroupThreadID und SVGroupID.
+Um einen aktiven Compute Shader mittels CPU aufzurufen, wird die Dispatch Methode aus der verwendeten Grafik-API verwendet.
+Die Dispatch Methode nimmt die Anzahl an Threads in drei Dimensionen als Argument.
+
+
+Dafür gelten jedoch Hardware Limitierungen.
+Für die Anzahl der Threads muss gelten
+\begin{gather*}
+	numThreadsX, numThreads, numThreadsZ \leq 128 \\
+	numThreadsX * numThreadsY * numThreadsZ = 1024
+\end{gather*}
+(Für Compute Shader Version 5\_0)
+
+\subsection{Primitive Subgroups}
+\label{subsec:primitive_subgroups}
+
+\subsection{Parallele Datenverarbeitung}
+\label{subsec:flynn}
+Michael Flynn unterteilte Rechnerarchitekturen in vier Kategorien. Abhängig davon wurden Daten un \cite{Jakob2017}
+SIMD
+MIMD
+
+\subsection{Die traditionelle Rendering Pipeline}
+\label{subsec:traditionelle_renderingpipeline}
+Um den Nutzen der neu vorgestellten Task- und Mesh-Shader Pipeline zu verstehen, muss zunächst die traditionelle Pipeline da betrachtet werden, wo sie verbessert werden kann.
+\subsubsection{Vertex Shader}
+Zunächst wird der vom Entwickler programmierbare Vertex Shader angesteuert.
+Hier können Operationen auf den einzelnen Vertex ausgeführt werden.
+Der Vertex Shader wird für jeden Vertex einzeln aufgerufen.
+Hier zeichnet sich das SIMD Modell der GPU aus (\ref{subsec:flynn}, da die Instruktionen parallel auf mehrere Daten gleichzeitig ausgeführt werden.

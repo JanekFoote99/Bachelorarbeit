@@ -1,0 +1,32 @@
+\documentclass[a4paper,12pt]{article}
+\input{framework/Setup}
+
+\def\Studiengang{Informatik}
+\def\Autorenname{Janek Foote}
+\def\Dozent{Quirin Meyer}
+\def\Titel{Parallel Mesh Decompression on the GPU}
+
+% Infos zum Unternehmen
+\def\Unternehmen{<FIRMENNAME>}
+\def\Abteilung{<ABTEILUNG>}
+\def\Strasse{<STRAßE>}
+\def\Ort{<ORT>}
+
+% Infos zum Betreuer
+\def\Betreuer{Quirin Meyer}
+\def\Funktion{<FUNKTION BETREUER>}
+\def\Telefon{<TELEFONNUMMER BETREUER>}
+\def\Email{<BETREUER EMAIL>}
+
+% Daten
+\def\Beginn{<BEGINN>}
+\def\Ende{<ENDE>}
+\def\Abgabe{\today}
+
+\startHSCdocument[Bachelorarbeit]
+
+  \include{Sektionen/Einfuehrung}
+  \include{Sektionen/Grundlagen}
+  \include{Sektionen/Meshshader}
+
+\finishHSCdocument
