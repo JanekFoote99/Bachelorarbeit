@@ -2,16 +2,193 @@
 
 test \ldots
 
+\subsection{Brotli Kompressionsstandard}
+\label{subsec:brotli}
+Brotli-G ist eine Weiterentwicklung des Brotli Kompressionsstand, der von AMD im Jahre 2022 entwickelt und veröffentlicht wurde.
+Die AMD Spezifikation bietet parallele Datenverarbeiten nach dem SIMD Prinzip (Kap.~\ref{fig:simd_pattern}) auf Parallelrechnern, wie GPUs und Multithreaded CPUs.
+Um das von AMD veröffentlichten Kompressionsmodell zu verstehen, muss zunächst das Original untersucht werden. \newline
+
+Brotli ist ein von Google Research entwickelter Kompressionsstandard, der 2013 veröffentlicht wurde.
+Er ist darauf ausgelegt, Webinhalte effizienter zu komprimieren als ältere Standards wie Gzip oder Deflate.
+BrotliG wurde mit bedacht auf Kompatibilität mit dem offiziellen Brotli entwickelt.
+So sollte Brotli auch in der Lage sein, Inhalte, die mit BrotliG komprimiert wurden, zu entschlüsseln.
+Zu beachten ist, dass dies nur in diese Richtung funktioniert, und somit Brotli das BrotliG Format nicht dekodieren kann  \cite{BrotliG2022}.
+
+Brotli verwendet eine Kombination vieler Kompressionsalgorithmen, um Inhalte effizient zu komprimieren. 
+Brotli's Kern besteht aus einem LZ77 Algorithmus, der in unterschiedlichen Versionen auch in anderen Kompressionsstandard verwendet wird.
+Der LZ77 Algorithmus wird zusätzlich mittels Huffman Codierung optimiert.
+
+\subsubsection{LZ77}
+\label{subsubsec:lz77}
+Der LZ77 (\textit{Lempel-Ziv77}) Algorithmus gehört zu der Gruppe der Phrasenkodierung und ist ein verlustfreier, auf einem Wörterbuch basierender Algorithmus.
+Der Algorithmus komprimiert sequentielle Zeichenketten.
+Dabei kann dieser auf jeder Art von Daten, egal wie der Inhalt und die Größe aussieht, angewendet werden.
+Ob es sich lohnt, diesen anzuwenden, ist jedoch von den Daten abhängig.
+???Beispielsweise sind Bilder ein schlechter Anwendungsfall, da die Informationen sich nur im Ausnahmefall wiederholen, und es deutlich bessere Kompressionsalgorithmen zur Komprimierung dieser gibt.
+Das Ziel des LZ77 Algorithmus ist lediglich, redundante Informationen zusammenzufassen. \newline
+
+Bevor der Algorithmus beschrieben wird, werden die benötigten Elemente definiert:
+
+\begin{enumerate}
+\item{Eingabestrom:} Die zu kodierenden Daten
+\item{Symbol:} Ein willkürlich gewähltes Element des Eingabestroms
+\item{Datenfenster:} Alle Symbole vom Start des Eingabestroms bis zum aktuell betrachteten Symbol
+\item{Vorschaubuffer:} Alle Symbole von dem aktuelle betrachteten Symbol bis zum Ende des Eingabestroms
+\item{Vorschaufenster:} Ein Buffer fester Größe das Symbole vom aktuell betrachteten Symbol bis zum Ende des Buffers enthält
+\end{enumerate}
+
+Der Ablauf des Algorithmus besteht aus folgenden Schritten:
+
+Zu Beginn des Algorithmus wird das Datenfenster auf den Start des Eingabestroms gesetzt.
+Dieses Fenster ist zunächst leer.
+Das Vorschaufenster wird vom Start des Eingabestroms mit Symbolen gefüllt, bis dieses voll ist.
+Zunächst wird das erste Symbol kodiert.
+Dafür verwendet der LZ77 Algorithmus ein Tupel in der Form von (\textit{Position}, \textit{Lauflänge}) und abschließend das zu kodierende Symbol.
+Dem Wörterbuch noch nicht bekannt Symbole werden neue Symbole mit (0, 0)Symbol hinzugefügt.
+Nach jedem Schritt werden das Daten- und Vorschaufenster um die Lauflänge der kodierten Symbole im Eingabestrom verschoben.
+\cite{Microsoft2023}
+
+Der LZ77-Algorithmus ist einfach und effektiv.
+Seine Weiterentwicklungen nennen sich LZ78 und LZW, die zwar dem LZ77 Algorithmus technisch überlegen sind, aufgrund von Patenten jedoch nicht so eine große Rolle spielen wie die erste Iteration von Lempel und Ziv.
+In Kombination mit anderen Techniken wie der Huffman Codierung bildet der LZ77-Algorithmus jedoch die Grundlage vieler leistungsstarker Kompressionsstandards, die heute in vielen Applikationen zu finden sind.
+
+\subsection{Parallele Datenverarbeitung}
+\label{subsec:flynn}
+Michael Flynn unterteilte Rechnerarchitekturen in Kategorien, die Abhängig von der Anzahl der Instruktions- und Datenströme sind. \newline
+Die Instruktions- und Datenströme:
+\begin{enumerate}
+\item[\textit{SI}] (\textbf{S}ingle \textbf{I}nstruction)
+\item[\textit{MI}] (\textbf{M}ultiple \textbf{I}nstruction) 
+\item[\textit{SD}] (\textbf{S}ingle \textbf{D}ata) 
+\item[\textit{MD}] (\textbf{M}ultiple \textbf{D}ata) 
+\end{enumerate}
+können kombiniert werden. \newline
+
+Dadurch ergeben sich die vier Rechnerarchitekturen \textit{SISD}, \textit{SIMD}, \textit{MISD}, \textit{MIMD}.
+\subsubsection*{SISD (Single Instruction, Single Data)}
+Die am häufigsten anzutreffene Rechnerarchitektur.
+Bekannter unter den Namen Von-Neumann Architektur bearbeitet diese Architektur die auf dem Speicher befindlichen Daten seriell.
+Man redet auch von skalaren Operationen auf die Daten.
+Rechnerarchitekturen mit SISD sind leicht zu verstehen und die Verarbeitung ist vorhersehbar.
+Der Preis dafür ist jedoch die langsame Geschwindigkeit gegenüber parallelen Architekturen.
+\subsubsection*{SIMD (Single Instruction, Multiple Data)}
+Um die Geschwindigkeit zu erhöhen, werden Daten, auf denen die selbe Operation ausgeübt wird, parallel verarbeitet.
+Das ist bei der Berechnung von Vektoren und Matrizen von Vorteil.
+Betrachten wir die Addition zweier Vektoren, so kann der resultierende Vektor berechnet werden, wenn die einzelnen Komponenten der Vektoren addiert werden (siehe Abb.~\ref{fig:simd_pattern}). Der Vertex Shader macht von dieser diesem Konzept Gebrauch, während dieser seine per-Vertex Operationen ausführt \cite{DalCin1996}.
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=1.0]{Bilder/Simd_pattern.jpg}
+  \caption[SIMD Pattern]{\textbf{Parallele Addition von Daten} In der Abbildung ist eine Addition verschiedener Daten zu sehen. Da die selbe Operation ausgeübt wird können die einzelnen Komponenten parallel verarbeitet werden.
+  Abbildung ist aus http://ftp.cvut.cz/kernel/people/geoff/cell/ps3-linux-docs/CellProgrammingTutorial/BasicsOfSIMDProgramming.html }
+  \label{fig:simd_pattern}
+\end{figure} 
+\subsubsection*{MISD (Multiple Instruction, Single Data)}
+Um alle Kombinationen von Daten und Instruktionsströmen zu zeigen wurde auch MISD definiert.
+Die Rechnerarchitektur bezieht sich darauf, das auf nur einem Datenpunkt verschiedene Operationen ausgeführt werden.
+Für eine lange Zeit war diese Art von Rechnerarchitektur rein theoretisch anzutreffen, da weder 
+\subsubsection*{MIMD (Multiple Instruction, Multiple Data)}
+Wie auch die SIMD Architektur ist MIMD in Parallelrechnern anzutreffen.
+Das Operationsprinzip von MIMD ist die Datenparallelität.
+Das Funktionsprinzip von MIMD-Rechnern umfasst die gleichzeitige Ausführung von Anweisungen durch mehrere Prozessoren, die entweder über gemeinsame Variablen oder durch Nachrichten miteinander kommunizieren \cite{DalCin1996}.
+TODO später \cite{Jakob2017} \newpage
+
+\subsection{Die traditionelle Rendering Pipeline}
+\label{subsec:traditionelle_renderingpipeline}
+Um den Nutzen der neu vorgestellten Task- und Mesh-Shader Pipeline zu verstehen, muss zunächst die traditionelle Pipeline dort betrachtet werden, wo sie verbessert werden kann.
+Die Rendering Pipeline besteht aus eine Reihe von programmierbaren (Abb.~\ref{fig:traditional_pipeline} grün dargestellt) und fixed-function (Abb.~\ref{fig:traditional_pipeline} türkis dargestellt) Stages.
+Dazu kommt, das einige dieser Stages optional sind.
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.43]{Bilder/traditionelle_pipeline.jpg}
+  \caption[traditionelle Rendering Pipeline]{\textbf{traditionelle Rendering Pipeline} \newline Die Abbildung beschreibt den Verlauf durch die einzelnen Shader Stages, die jeder Vertex macht. Entnommen wurde diese aus dem NVidia Blogpost \cite{Kubisch2018}}
+  \label{fig:traditional_pipeline}
+\end{figure}
+\newline
+Im GPU Memory angekommen, liest die \textit{Vertex Attribute Fetch} Stage die Vertex Daten aus, und sendet diese an den Vertex Shader.
+Die Vertex Daten werden dort in die benötigten Koordinatensysteme transformiert und der optionalen Tessellation Stage weitergegeben, falls diese verwendet wird.
+Die Tessellation Stage ist dazu da, Patches von Primitiven in kleinere Primitiven zu unterteilen.
+Der optionale Geometry Shader kann dazu verwendet werden, weitere Vertices zu generieren.
+Im Rasterizer angekommen, werden Primitiven verarbeitet und daraus Fragmente berechnet, denen der Fragment Shader zum Abschluss ihre Farbe gibt. \newline
+Im Folgenden werden die einzelnen Stages nochmal genauer erläutert.
+
+\subsubsection{Vertex Shader}
+\label{subsubsec:vertex}
+Zunächst wird der vom Entwickler programmierbare Vertex Shader angesteuert.
+Dieser ist nicht optional, da alles nachfolgende auf den ausgegebenen Vertices aufbaut.
+Hier können Operationen auf einzelnen Vertices ausgeführt werden.
+Dafür wird der Vertex Shader für jeden Vertex einzeln aufgerufen.
+Hier zeichnet sich das SIMD Modell der GPU aus (Kap~\ref{subsec:flynn}), da der Vertex Shader von mehreren Prozessoren auf unterschiedlichen Vertices zeitgleich operiert.
+Die Inputs des Vertex Shaders werden mittels \textit{Vertex Attribute Locations} in den Shader eingebunden.
+Der Shader kann dadurch die Positionen, Normalen und Texturkoordinaten von der CPU aufnehmen.
+Eine Einschränkung, die dabei aufkommt, ist das Verhältnis von Eingabe und Ausgabe Vertices.
+Der Shader erwartet, dass für jeden Eingabe Vertex auch ein Vertex ausgegeben wird.
+Die Vertex Position wird für gewöhnlich in den Clip-Space transformiert, und der Pipeline weitergegeben.
+
+\subsubsection{Tessellation Stage}
+\label{subsubsec:tesselation}
+Die Ausgabe Vertices des Vertex Shaders gelangen anschließend in die optionale Tessellation Stage.
+Der generelle use-case ist, einen Patch an Primitiven in wiederum kleinere Primitiven zu verarbeiten. 
+Die Tessellation Stage wird in drei Schritte unterteilt.
+Darunter ist mit dem \textit{Tessellation Control Shader} (TCS) ein optional programmierbarer Schritt, eine fixed-function mit der \textit{Primitive Generation} und einen programmierbaren \textit{Tessellation Evaluation Shader} (TES).
+
+\subsubsection*{Tessellation Control Shader (TCS)}
+Der \textit{Tessellation Control Shader (TCS)} (der wiederum optional ist), ist ein geeigneter Schritt um das \textit{LOD} (Level of Detail) zu berechnen und unter gewissen Voraussetzungen vorab einige Patches zu cullen. 
+Ein Patch beschreibt eine Anzahl an Primitiven.
+Aus der Subdivision dieses Patches werden weitere Vertices berechnet, die zur Verarbeitung in den nächsten Schritt der Pipeline geschickt werden.
+Im TCS wird der Grad der Tessellation, das Spacing zwischen subdivided Punkten und die gewünschte Topologie festgelegt.
+Genauer gesagt wird hier gesetzt, wie oft die Primitiven unterteilt werden und welche Form diese am Ende haben sollen (triangle, quad, isolines).
+
+\subsubsection*{Tessellation Topology Generation (TPG)}
+Mit der fixed-function stage des Tessellation Schritts werden die Primitiven mittels den im TCS bestimmten Parametern unterteilt.
+Die Koordinaten werden anschließend für den Tessellation Evaluation Shader berechnet.
+Diese unterteilt die Patches abhängig von den Berechnungen der TCS.
+
+\subsubsection*{Tessellation Evaluation Shader (TES)}
+Der \textit{Tessellation Evaluation Shader} hat den einfachsten Job und realisiert lediglich die Arbeit, die von den zwei vorherigen Stages verrichtet wurde.
+Die berechneten Koordinaten des TPG werden in dieser Shader Stage interpoliert, um die neuen Vertices zu generieren.
+Abschließend werden die aus der Subdivision berechneten Vertices ausgegeben. 
+Wenn der optionale TCS nicht genutzt wird, werden default Parameter für den TPG benutzt. \cite{cozzi2012opengl}\cite{Carvalho2022}
+
+\subsubsection{Geometry Shader}
+\label{subsubsec:geometry_shader}
+Ein weiterer optionaler Schritt in der traditionellen Grafikpipeline ist der \textit{Geometry Shader}.
+Er bekommt eine Primitive als Input, und kann keine oder auch mehr Primitiven ausgeben, als er bekommen hat.
+Die Fähigkeit zusätzliche Vertices zu generieren ist auch das, was den Geometry Shader besonders macht.
+Der Geometry Shader bekommt seinen Input entweder vom TES, oder, wenn die Tessellation Stage keine Verwendung findet, vom Vertex Shader und leitet seine Ausgabe an den Fragment Shader weiter.
+Um Bandbreite zwischen CPU und GPU zu sparen, kann ein Geometry Shader ein Dreiecksnetz mit wenigen Dreiecken erweitern und dieses so detaillierter gestalten.
+Ähnlich wie bei der Tessellation, die auf \textit{Patches} von Primitiven agiert, verarbeitet der Geometry Shader die Primitiven an sich.
+
+\subsubsection{Pixel Shader}
+\label{subsubsec:pixel_shader}
+Der Pixel bzw. Fragment Shader ist der letzte programmierbare Schritt der Grafikpipeline.
+In diesem werden die transformierten Vertices und Primitiven schlussendlich gezeichnet.
+Der Pixel Shader operiert jedoch nicht auf diesen Daten, sondern auf sogenannten \textit{Fragmenten}.
+Das bedeutet, bevor der Pixel Shader seinen Input bekommt, müssen Vertices und Primitiven erst durch den Rasterizer.
+Nun liegt es am Entwickler, den einzelnen Fragmenten ihre Farbe zu geben.
+In einem Modell werden per-Vertex Texturkoordinaten gesetzt, die auf eine Texturemap verweisen.
+Im Fragment Shader wird diese Texturemap mittels Sampler interpoliert.
+Zusätzlich müssen noch Materialeigenschaften beachtet werden.
+Alternativ kann jeder Vertex auch seinen eigenen Farbwert besitzen. \newline
+
+Um der Szene mehr Realismus beizusteuern, kann im Fragment Shader auch ein Lichtmodell implementiert werden.
+Beispiele dafür sind \textit{Flat shading}, \textit{Gouraud shading} und \textit{Phong shading}.
+Für die Lichtberechnung werden die Oberflächen-Normalen benötigt.
+Diese sind entweder in einem Dreiecksnetz gegeben, oder müssen noch berechnet werden.
+Ausgabe des Pixel Shaders ist wiederum ein Fragment.
+
 \subsection{Compute Shader}
 \label{subsec:compute_shader}
-Compute Shader sind kein fester Bestandteil der Rendering Pipeline.
-Sie dienen als ..., um auf der GPU Operationen performant auszuführen, die auf CPU Ebene länger brauchen würde.
-Compute Shader blablabla
-Um das SIMD Konzept des Compute Shaders zu verstehen sind zwei Variablen elementar wichtig.
-SVGroupThreadID und SVGroupID.
-Um einen aktiven Compute Shader mittels CPU aufzurufen, wird die Dispatch Methode aus der verwendeten Grafik-API verwendet.
-Die Dispatch Methode nimmt die Anzahl an Threads in drei Dimensionen als Argument.
+Der Compute Shader gehört nicht zur traditionellen Grafikpipeline, kann darin aber seinen Nutzen finden.
+Sie dienen dazu, jede Mögliche Information die gewünscht ist auf der GPU zu berechnen.
+Anders als bei den Shader Stages der traditionellen Grafikpipeline (Kap.~\ref{fig:traditional_pipeline}), erwartet der Compute Shader keine definierten Input/Output Daten, wie beispielsweise der Vertex Shader, der als Input und Output einen Vertex erwartet.
+Der Compute Shader kann also willkürliche Daten verarbeiten und dabei noch die Parallelisierung der GPU nutzen \cite{Compute24}. \newline
 
+Wie schon gesagt erhält der Compute Shader keine Input Variablen wie beispielsweise der Vertex Shader.
+Im Gegensatz zu diesem werden benötigte Daten mittels Buffer und \glqq Shader Ressource Views\grqq\ auf die GPU geladen (in D3D12).
+Aber ganz ohne Inputs kommt der Compute Shader nicht aus.
+Vor Aufruf des Compute Shaders muss bestimmt werden, mit wie vielen Threads dieser arbeiten soll.
+Der Aufruf der Dispatch Methode mittel Grafik API führt dazu, das der aktuell aktive Compute Shader aufgerufen wird.
+Die Dispatch Methode nimmt die Anzahl an Threads in drei Dimensionen als Argument.
 
 Dafür gelten jedoch Hardware Limitierungen.
 Für die Anzahl der Threads muss gelten
@@ -21,20 +198,6 @@ Für die Anzahl der Threads muss gelten
 \end{gather*}
 (Für Compute Shader Version 5\_0)
 
-\subsection{Primitive Subgroups}
-\label{subsec:primitive_subgroups}
-
-\subsection{Parallele Datenverarbeitung}
-\label{subsec:flynn}
-Michael Flynn unterteilte Rechnerarchitekturen in vier Kategorien. Abhängig davon wurden Daten un \cite{Jakob2017}
-SIMD
-MIMD
-
-\subsection{Die traditionelle Rendering Pipeline}
-\label{subsec:traditionelle_renderingpipeline}
-Um den Nutzen der neu vorgestellten Task- und Mesh-Shader Pipeline zu verstehen, muss zunächst die traditionelle Pipeline da betrachtet werden, wo sie verbessert werden kann.
-\subsubsection{Vertex Shader}
-Zunächst wird der vom Entwickler programmierbare Vertex Shader angesteuert.
-Hier können Operationen auf den einzelnen Vertex ausgeführt werden.
-Der Vertex Shader wird für jeden Vertex einzeln aufgerufen.
-Hier zeichnet sich das SIMD Modell der GPU aus (\ref{subsec:flynn}, da die Instruktionen parallel auf mehrere Daten gleichzeitig ausgeführt werden.
+Um das SIMD Konzept des Compute Shaders zu verstehen sind zwei Variablen elementar wichtig.
+SVGroupThreadID und SVGroupID.
+TODO

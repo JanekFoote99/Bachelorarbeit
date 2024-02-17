@@ -1,11 +1,11 @@
 \section{Task und Mesh Shader}
-Die Architektur auf die die neuartigen RTX GPUs von Nvidia aufbauen, erweitert die Möglichkeiten wie die Parallelisierung von GPUs genutzt werden kann.
+Die Architektur, auf der die neuartigen RTX-GPUs von Nvidia aufbauen, erweitert die Möglichkeiten, wie die Parallelisierung von GPUs genutzt werden kann.
 Mit der GeForce RTX 20er Serie wurden die ersten GPUs mit der Turing Architektur veröffentlicht, die sich auch an Privatpersonen richtet.
 Als großer Verkaufspunkt wurde bereits früh mit den Möglichkeiten von Real-time Raytracing und Deep Learning durch Tensor Core geworben \cite{Burgess2020}. 
 Eine wesentliche Änderung an der Grafikpipeline wird jedoch bis heute noch relativ wenig Beachtung geschenkt.
 Mit dem Shader Model 6 hat NVidia ihre sogenannte "next-generation shading Pipeline" vorgestellt.
-Damit wird eine alternative zur traditionellen Shading Pipeline gestellt, die dem Entwickler mehr Freiheit überlässt, die Parallelisierbarkeit der GPU zu nutzen.
-Der Mesh Shader hat die Eigenschaften des Compute Shaders \ref{subsec:compute_shader}, der Daten auf der GPU Parallel verarbeiten kann.
+Damit wird eine Alternative zur traditionellen Shading Pipeline gestellt, die dem Entwickler mehr Freiheit überlässt, die Parallelisierbarkeit der GPU zu nutzen.
+Der Mesh Shader hat die Eigenschaften des Compute Shaders \ref{subsec:compute_shader}, der Daten auf der GPU parallel verarbeiten kann.
 Auch Geometrie Daten können mithilfe des Compute Shaders berechnet werden, jedoch ist der Compute Shader kein Teil der traditionellen Grafikpipeline und findet dadurch seinen Nutzen auch außerhalb des Renderings \cite{Ilett2022}.
 Mit der \textit{Mesh Shading Pipeline} wurde die Möglichkeit der Parallelisierung des Compute Shaders mit der neuen Rendering Pipeline verknüpft.
 Anders als bei der herkömmlichen Grafikpipeline erhält der Mesh Shader seine Daten direkt vom Speicher. 
@@ -14,28 +14,28 @@ Dadurch öffnen sich Türen für den Entwickler, da er komprimierte Daten direkt
 
 \subsection{Meshlets}
 \label{subsec:meshlets}
-Um die neuartigen Shader für das Rendering zu verwenden, wird empfohlen, das gesamte Mesh in kleinere Subsets, sogennante Meshlets, zu unterteilen. 
-Die traditionelle shading pipeline verarbeitet die Daten des Dreiecksnetzes in serieller Manier. 
-Dadurch kommt es jedoch zu bottlenecks.
-In der traditionellen Pipeline werden Vertex und Primitiven Daten zugeschnitten und in kleinen Clustern verarbeitet.
-Dazu wird der Primitive Distrubuter vor der Vertex Shader Stage aufgerufen.
-Dieser liest die Daten des Index Buffers und generiert dem entsprechend möglichst performant diese Cluster an Daten.
-Der Schritt des Primitive Distrubuters ist jedoch ein fixed-function step der Grafikpipeline, wodurch der Entwickler keinen direkten Zugriff hat.
-Das hat zur Folge, das die Cluster nicht auf die Bedürfnisse des Entwicklers und dessen Implementierung angepasst werden können.
-Zuzüglich werden die Cluster zu jedem Frame, bzw. vor jedem Aufruf der Shader neu generiert.
+Um die neuartigen Shader für das Rendering zu verwenden, wird empfohlen, das gesamte Mesh in kleinere Subsets, sogenannte Meshlets, zu unterteilen. 
+Die traditionelle Grafikpipeline verarbeitet die Daten des Dreiecksnetzes in serieller Manier. 
+Dadurch kommt es jedoch zu Bottlenecks.
+In der traditionellen Pipeline werden Vertex und Primitiven zugeschnitten und in kleine Clustern verarbeitet.
+Dazu wird der Primitive Distributor vor der Vertex Shader Stage aufgerufen.
+Dieser liest die Daten des Index Buffers und generiert dementsprechend möglichst performant diese Cluster an Daten.
+Der Schritt des Primitive Distributor ist jedoch eine fixed-function Stage der Grafikpipeline, wodurch der Entwickler keinen direkten Zugriff hat.
+Das hat zur Folge, dass die Cluster nicht auf die Bedürfnisse des Entwicklers und dessen Implementierung angepasst werden können.
+Zuzüglich werden die Cluster zu jedem Frame, bzw. vor jedem Aufruf der Pipeline neu generiert.
 Dieser Schritt ist redundant, sollte das Dreiecksnetz zur Laufzeit unverändert bleiben \cite{Carvalho2022}, \cite{Kubisch2018}. \newline
 
-Durch die Compute Shading  des Mesh Shaders ist der Input der Daten nicht mehr festgelegt wie bei der traditionellen Pipeline .
+Durch die Compute Shading Natur des Mesh Shaders ist der Input der Daten nicht mehr festgelegt wie bei der traditionellen Pipeline.
 Dadurch kann der Entwickler seine eigenen Implementationen zur Generierung von Meshlets verwenden.
 Anders als bei der herkömmlichen Grafikpipeline werden Meshlets auf CPU Ebene erstellt.
 Dazu werden Vertex Positionen und Indizes benötigt.
 Die Anzahl der Vertices und Primitiven muss im Vorfeld festgelegt werden.
-Die Auswahl der Meshletgröße ist Abhängig von der verwendeten GPU.
-So wird im NVidia Blogpost "Introduction to Turing Mesh Shaders" eine maximale Vertexanzahl von 64, und Primitivenanzahl von 126 empfohlen. 
+Die Auswahl der Meshletgröße ist abhängig von der verwendeten GPU.
+So wird im NVidia Blogpost \glqq Introduction to Turing Mesh Shaders\grqq\ eine maximale Anzahl an Vertices von 64, und Primitiven von 126 empfohlen. 
 Es werden 126 statt 128 Primitiven empfohlen, da 4 Byte für die Anzahl der Primitiven verwendet werden, die im selben Block Speicher enthalten sein sollen, bzw. keinen weiteren Block beanspruchen sollen \cite{Kubisch2018}.
 Arseny Kapoulkine hat verschiedene Meshletgrößen miteinander verglichen.
-Er ist zu dem Schluss gekommen, das 64 Vertices und 84 Primitives am effizientesten ist, insbesondere dann, wenn im Task Shader Culling an den einzelnen Meshlets betrieben wird.
-Desweiteren ist die Empfehlung des Blogposts nach eigenen Tests zwar ein guter Maßstab, jedoch wird im Durchschnitt viel Speicher des Primitiven Buffers ungenutzt bleiben, da die 126 Primitiven mit 64 Vertices nie erreicht werden \cite{Kapoulkine2023}.
+Er ist zu dem Schluss gekommen, dass 64 Vertices und 84 Primitives am effizientesten ist, insbesondere dann, wenn im Task Shader Culling an den einzelnen Meshlets betrieben wird.
+Des weiteren ist die Empfehlung des Blogposts nach eigenen Tests zwar ein guter Maßstab, jedoch wird im Durchschnitt viel Speicher des Primitiven Buffers ungenutzt bleiben, da die 126 Primitiven mit 64 Vertices nie erreicht werden \cite{Kapoulkine2023}.
 
 \subsection{Implementierung Mesh Shader}
 \label{subsec:meshshaderimpl}
@@ -63,19 +63,18 @@ Wenn das alles gemacht ist können in der Commandlist der Constant Buffer und di
 
 \subsection{Mesh Shader Implementation}
 \label{subsec:mesh_shader_impl}
-Im Codeabschnitt~\ref{lst:shadercode} ist der in dieser Arbeit verwendetete Mesh Shader zu sehen.
+Im Codeabschnitt~\ref{lst:shadercode} ist ein einfacher Mesh Shader zu sehen.
 Im Mesh Shader wird die Root Signature entsprechend den Anforderungen gesetzt.
 Minimal wird ein StructuredBuffer für jeden der auf der CPU generierten Meshlet Buffer benötigt.
-Um das Endresultat auf die Szene anzupassen wird zusätzlich noch ein ConstantBuffer verwendet, der die\textit{model}, \textit{modelView} und \textit{modelViewProjection} Matrix beinhaltet. 
+Um dem Endresultat 3-Dimensional wirken zu lassen, wird ein ConstantBuffer verwendet, der die\textit{model}, \textit{modelView} und \textit{modelViewProjection} Matrix beinhaltet. 
 Zusätzlich dazu nimmt der Constant Buffer noch ein boolean, um zu steuern, das die Meshlets farbig hervorgehoben werden.
-Zunächst wird das aktuelle Meshlet aus dem Meshlet Descriptor Buffer genommen.
+Zunächst wird das aktuelle Meshlet aus dem \textit{Meshlet Descriptor Buffer} genommen.
 Die SV\_GroupID stellt in dieser Implementierung den aktuellen Index der Meshlets dar.
 Um den lokalen Index des aktuellen Meshlets zu bekommen, muss die SV\_GroupThreadID verwendet werden.
 Die aktuelle GroupID wird in einzelne Threads unterteilt, damit die GPU sich bei der parallelen Verarbeitung nicht in die queere kommt.
-Die Anzahl der Threads wird mittles \textit{[NumThreads(128, 1, 1)]} im Mesh Shader, oder falls vorhanden im Task Shader festgelegt.
+Die Anzahl der Threads wird mittles \textit{[NumThreads(128, 1, 1)]} im Mesh Shader, oder, falls vorhanden, im Task Shader festgelegt.
 
-\newpage \begin{lstlisting}[language = C++, caption = Mesh Shader Main]
-\label{lst:shadercode}
+\newpage \begin{lstlisting}[language = C++, caption = Mesh Shader Main, label=lst:shadercode]
 [RootSignature(ROOT_SIG)]
 [NumThreads(128, 1, 1)]
 [OutputTopology("triangle")]
@@ -105,6 +104,6 @@ void main(
 }
 \end{lstlisting}
 
-
-\subsection{Speichern als Binärformat}
+\subsection{Das auf der GPU zu dekodierende Binärformat}
+\label{subsec:binary_format}
 [Eventuell nicht als eigenes Unterkapitel]
