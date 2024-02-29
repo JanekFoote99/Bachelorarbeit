@@ -1,12 +1,18 @@
 \section{Grundlagen}
 
-test \ldots
+Obwohl Dreiecksnetze eine effektive Darstellung bieten, 3D-Modelle darzustellen, beanspruchen diese sehr viel Speicherplatz.
+Mithilfe von Brotli-G sollen diese auf der CPU komprimiert, und auf der GPU dekomprimiert werden, sodass diese fertig zur Darstellung sind, ohne viel Bandbreite zu nutzen.
+Damit der Weg von Komprimierung zu Darstellung verständlich ist, müssen einige grundlegende Dinge geklärt werden.
+
+In diesem Grundlagenkapitel werden die von Brotli-G genutzen Algorithmen erläutert.
+Zusätzlich wird ein Ausblick auf die Grafikpipeline gegeben, und die Stellen betrachtet, bei denen weitere Verbesserungen vorgenommen werden können.
+Diese zeigt alle Transformationen, die die Daten eines Dreiecksnetzes von dem GPU Buffer bis zum Bildschirm durchläuft.
 
 \subsection{Brotli Kompressionsstandard}
 \label{subsec:brotli}
 Brotli-G ist eine Weiterentwicklung des Brotli Kompressionsstand, der von AMD im Jahre 2022 entwickelt und veröffentlicht wurde.
 Die AMD Spezifikation bietet parallele Datenverarbeiten nach dem SIMD Prinzip (Kap.~\ref{fig:simd_pattern}) auf Parallelrechnern, wie GPUs und Multithreaded CPUs.
-Um das von AMD veröffentlichten Kompressionsmodell zu verstehen, muss zunächst das Original untersucht werden. \newline
+Zum Verständnis des von AMD veröffentlichten Kompressionsmodells ist zunächst ein Blick auf das Original erforderlich. \newline
 
 Brotli ist ein von Google Research entwickelter Kompressionsstandard, der 2013 veröffentlicht wurde.
 Er ist darauf ausgelegt, Webinhalte effizienter zu komprimieren als ältere Standards wie Gzip oder Deflate.
@@ -15,42 +21,8 @@ So sollte Brotli auch in der Lage sein, Inhalte, die mit BrotliG komprimiert wur
 Zu beachten ist, dass dies nur in diese Richtung funktioniert, und somit Brotli das BrotliG Format nicht dekodieren kann  \cite{BrotliG2022}.
 
 Brotli verwendet eine Kombination vieler Kompressionsalgorithmen, um Inhalte effizient zu komprimieren. 
-Brotli's Kern besteht aus einem LZ77 Algorithmus, der in unterschiedlichen Versionen auch in anderen Kompressionsstandard verwendet wird.
+Brotli's Kern besteht aus einem LZ77 Algorithmus, der in unterschiedlichen Ausführung auch in anderen Kompressionsstandard verwendet wird.
 Der LZ77 Algorithmus wird zusätzlich mittels Huffman Codierung optimiert.
-
-\subsubsection{LZ77}
-\label{subsubsec:lz77}
-Der LZ77 (\textit{Lempel-Ziv77}) Algorithmus gehört zu der Gruppe der Phrasenkodierung und ist ein verlustfreier, auf einem Wörterbuch basierender Algorithmus.
-Der Algorithmus komprimiert sequentielle Zeichenketten.
-Dabei kann dieser auf jeder Art von Daten, egal wie der Inhalt und die Größe aussieht, angewendet werden.
-Ob es sich lohnt, diesen anzuwenden, ist jedoch von den Daten abhängig.
-???Beispielsweise sind Bilder ein schlechter Anwendungsfall, da die Informationen sich nur im Ausnahmefall wiederholen, und es deutlich bessere Kompressionsalgorithmen zur Komprimierung dieser gibt.
-Das Ziel des LZ77 Algorithmus ist lediglich, redundante Informationen zusammenzufassen. \newline
-
-Bevor der Algorithmus beschrieben wird, werden die benötigten Elemente definiert:
-
-\begin{enumerate}
-\item{Eingabestrom:} Die zu kodierenden Daten
-\item{Symbol:} Ein willkürlich gewähltes Element des Eingabestroms
-\item{Datenfenster:} Alle Symbole vom Start des Eingabestroms bis zum aktuell betrachteten Symbol
-\item{Vorschaubuffer:} Alle Symbole von dem aktuelle betrachteten Symbol bis zum Ende des Eingabestroms
-\item{Vorschaufenster:} Ein Buffer fester Größe das Symbole vom aktuell betrachteten Symbol bis zum Ende des Buffers enthält
-\end{enumerate}
-
-Der Ablauf des Algorithmus besteht aus folgenden Schritten:
-
-Zu Beginn des Algorithmus wird das Datenfenster auf den Start des Eingabestroms gesetzt.
-Dieses Fenster ist zunächst leer.
-Das Vorschaufenster wird vom Start des Eingabestroms mit Symbolen gefüllt, bis dieses voll ist.
-Zunächst wird das erste Symbol kodiert.
-Dafür verwendet der LZ77 Algorithmus ein Tupel in der Form von (\textit{Position}, \textit{Lauflänge}) und abschließend das zu kodierende Symbol.
-Dem Wörterbuch noch nicht bekannt Symbole werden neue Symbole mit (0, 0)Symbol hinzugefügt.
-Nach jedem Schritt werden das Daten- und Vorschaufenster um die Lauflänge der kodierten Symbole im Eingabestrom verschoben.
-\cite{Microsoft2023}
-
-Der LZ77-Algorithmus ist einfach und effektiv.
-Seine Weiterentwicklungen nennen sich LZ78 und LZW, die zwar dem LZ77 Algorithmus technisch überlegen sind, aufgrund von Patenten jedoch nicht so eine große Rolle spielen wie die erste Iteration von Lempel und Ziv.
-In Kombination mit anderen Techniken wie der Huffman Codierung bildet der LZ77-Algorithmus jedoch die Grundlage vieler leistungsstarker Kompressionsstandards, die heute in vielen Applikationen zu finden sind.
 
 \subsection{Parallele Datenverarbeitung}
 \label{subsec:flynn}

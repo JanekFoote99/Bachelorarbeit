@@ -10,7 +10,7 @@ Videospiele und Animationsserien wären ohne nicht vorstellbar.
 Architekten können ihre Ideen auch ohne Bleistift auf das Papier (oder den Bildschirm) bringen.
 Künstler wollen Modelle erschaffen, die den Eindruck gewinnen wollen, realitätsgetreu zu sein. 
 Die Folge davon ist, dass diese Modelle stetig komplexer werden, und somit ein größerer Speicheraufwand benötigt wird. 
-Um dem entgegenzuwirken, werden Methoden verwendet, diese digitalen Informationen zu komprimieren. \newline
+Um dem entgegenzuwirken, werden Methoden verwendet, diese digitalen Informationen zu komprimieren.
 
 \subsection{Geschichtliche Ausarbeitung Thema Datenkompression}
 \label{subsec:main_kompression}
@@ -27,7 +27,7 @@ So sind die Buchstaben \glqq E\grqq\ und \glqq T\grqq\ die Buchstaben des englis
 %Datenkompression problem ausführen: durch ein stop Signal geht eine wichtige Eigenschaft verloren (eventuell binär)
 Der Morse Code hat gezeigt, welchen Nutzen die Kompression von Information beinhaltet.
 Zu Kriegszeiten hat dieser eine effiziente und schnelle Übermittlung von Informationen ermöglicht.
-Dadurch konnte in Krisenmomenten schnell reagiert werden, um so größeren Katastrophen frühzeitig abzuwenden, aber leider auch zu verursachen.
+Dadurch konnte in Krisenmomenten schnell reagiert werden, um so größeren Katastrophen frühzeitig abzuwenden, aber leider auch, solche zu verursachen.
 
 \subsubsection*{Der Ist-Stand}
 Springen wir in die heutige Zeit sehen wir die Auswirkung von komprimierten Daten.
@@ -67,14 +67,38 @@ Um die Bitrate zu minimieren wird Transrating verwendet.
 So kann die Auflösung beibehalten werden bei jedoch geringere Bitrate.
 Die Verfahren zur Minimierung des Datenstroms hören sich zunächst sehr mächtig an, sind jedoch mit Vorsicht zu genießen.
 Der Vorgang ist nämlich Verlustbehaftet und kann bei zu starker Nutzung zu Artefakten führen.
-Dafür ermöglicht es jedoch Menschen, deren Internetzugang ein Abspielen in hoher Qualität nicht zulässt, den Streaming Anbieter zu nutzen.
+Dafür ermöglicht es jedoch Menschen, deren Internetzugang ein Abspielen in hoher Qualität nicht zulässt, den Streaming Anbieter zu nutzen. \newline
 
-Der Ursprung der Datenkompression ist dementsprechend der Weiterentwicklung des Morse Codes zurückzuführen. 
-
-TODO
+Neben dem Beispiel von Streaming Anbietern reihen sich noch viele weitere Beispiele, die einen riesigen Vorteil von der Datenkompression ziehen.
+In einem jedem BWL Grundlagenfach wird die Wichtigkeit des Wettbewerbsvorteils vermittelt.
+Ein Unternehmen muss auf Marktveränderungen schnellstmöglich erkennen.
+Insbesondere Unternehmen im Finanzbereich sind davon abhängig, damit die Datenanalyse schnellstmöglich auf Kursschwankungen reagieren kann.
 
 \subsection{Steigende Komplexität}
 \label{subsec:steigende_komplexität}
 Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, wodurch die Anforderungen an der Hardware steigen. In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen. Der Wunsch nach realistischeren Modellen in der Animationsfilm und Videospielbranche hat die Dreiecksanzahl von 3D Modellen in die Höhe schießen lassen. 
 
 \subsection{Ziel der Arbeit}
+Wie man Anhand der Geschichte sieht, war die Datenkompression in ihrer frühen Zeit ein wichtiges Tool, um Informationen zu weiterzugeben.
+Dennoch hat und wird sie immer größere Bedeutung finden.
+Durch die rasch zunehmenden Digitalisierung wurden sowohl Massenmedien, die zur Speicherung von Daten dienen und verbesserten Leitungen bis hin zu Glasfaserkabeln, die eine höhere Bandbreite ermöglichen, entwickelt.
+Die Unterhaltungsbranche hat sehr von der Entwicklung profitiert.
+Aber nicht nur in der Bereitstellung ihres Streaming Services haben Kompressionsmethoden eine Relevanz bei Anbieter wie Youtube, Netflix oder Disney+. \newline
+
+Besonders in westlichen Ländern ist die Firma Walt Disney der wohl bekannteste Herausgeber von Animationsfilmen und -serien.
+In früher Zeit wurden Disney Produktionen von Hand gezeichnet.
+Da das ein sehr mühseliger und langwieriger Prozess ist, wurde eine neue Technik verwendet, die die Effizienz und Produktionsgeschwindigkeit maßgeblich erhöht.
+Anstatt die Szene von Frame zu Frame zu konstruieren, und so Charaktere und Objekte aus neuen Positionen und Blickwinkeln ständig neu zu zeichnen, wurden die zu Beginn angesprochenen 3D-Modelle entworfen.
+Das hatte zudem zur Folge, das Effekte, die schwer zu zeichnen waren, realistischer in Simulationen zu berechnen waren, wie z.B. die Welleneffekte im Wasser.
+Weitere Anwendungsfälle für 3D-Modelle in der Unterhaltungsbranche sind Videospiele, visuelle Effekte in Film und Fernsehen und in \textit{Virtual-Reality (VR)} und 3D-Hologramme bei Shows und in Themenparks. 
+3D-Modelle sind auch in anderen Bereichen anzutreffen.
+Architekten können ihre Vorstellung visualisieren, und so den Auftragsgeber ein erstes Bild zur Inneneinrichtung geben.
+3D Drucker können diese Modelle mit Kunststoff herstellen.
+In der Fertigung werden Modelle mittel CNC Fräse robuster hergestellt. \newline
+
+Eine gängige Repräsentation von 3D-Modellen ist die eines Dreiecksnetzes.
+Damit die 3D-Modelle möglichst nah an dem ist, das sich der Künstler vorgestellt hat, können diese Dreiecksnetze eine Größe Anzahl an Dreiecken besitzen.
+In dieser Arbeit soll der neuartige Kodierungsstandard BrotliG getestet werden.
+Ein beliebiges Dreiecksnetz wird dafür zunächst in viele, kleine mini-Dreiecksnetze zerteilt.
+Die sogenannten \textit{Meshlets} werden in einem eigenen Format gespeichert, das anschließend von BrotliG auf der CPU komprimiert wird.
+Die GPU bekommt die Daten, und dekomprimiert jedes einzelne Meshlet, um das gesamte Mesh abschließend zu Rendern.
