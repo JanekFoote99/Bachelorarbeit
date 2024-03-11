@@ -166,16 +166,11 @@ url="https://doi.org/10.1007/978-3-322-94769-7_2"
   url    = {https://api.semanticscholar.org/CorpusID:212549082},
 }
 
-@Article{Burgess2020a,
-  author   = {Burgess, John},
-  journal  = {IEEE Micro},
-  title    = {RTX on—The NVIDIA Turing GPU},
-  year     = {2020},
-  number   = {2},
-  pages    = {36-44},
-  volume   = {40},
-  doi      = {10.1109/MM.2020.2971677},
-  keywords = {Graphics processing units;Ray tracing;Tensors;Multiprocessors;Random access memory;Deep learning;Instruction sets;I.3.1.a Graphics processors < I.3.1 Hardware Architecture < I.3 Computer Graphics < I Computing Methodologies;C.1.2.i TC scheduling and synchronization < C.1.2 Multiple Data Stream Architectures (Multiprocessors) < C.1 Processor Architect;C.1.4.e Multi-core/single-chip multiprocessors < C.1.4 Parallel Architectures < C.1 Processor Architectures < C Computer Systems;Deep learning;Ray tracing;GPU;Turing;Tensor Core;RTCore;SIMT},
+@Article{,
+  author  = {Jensen, Mark Bo; Frisvad, Jeppe Revall; Bærentzen, J. Andreas},
+  journal = {Journal of Computer Graphics Techniques},
+  title   = {Performance Comparison of Meshlet Generation Strategies},
+  year    = {2023},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

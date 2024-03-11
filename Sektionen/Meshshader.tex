@@ -80,13 +80,50 @@ Der Meshlet Buffer setzt sich auch folgenden Elementen zusammen
 \item Primitive Count: Die Anzahl der Primitives P in dem Meshlet mit dem Index i
 \item Vertex Offset: Die Menge an Schritten im Vertex Buffer, um an die Vertices des i-ten Meshlets zu gelangen
 \item Primitive Offset: Die Menge an Schritten im Index Buffer um an die Primitives des i-ten Meshlets zu gelangen
-\end{itemize}
+\end{itemize} \cite{Jensen2023}
+Im nächsten Abschnitt wird genauer auf die neuen Buffer eingegangen. \newline
+
+\subsubsection*{Vertex Index}
+Um auf einen Vertex zuzugreifen, wird der Buffer meshlet\_vertices benötigt.
+Er beinhaltet Ganzzahlen ohne Vorzeichen, die auf einen bestimmten Vertex eines Meshlets zeigen.
+Im Codeabschnitt~\ref{lst:shadercode} wir die Variable vertexIndex mittels der GetVertexIndex Methode gesetzt.
+In der Methode wird der lokale Vertex Index mittels:
+\begin{equation*}
+localVertex = VertexOffset + localIndex
+\end{equation*}
+bestimmt.
+Mithilfe des localIndex kann nun der Vertex Index aus dem meshlet\_vertices Buffer gelesen werden.
+Abschließend wird der Vertex mithilfe des Vertex Index aus dem Buffer mit den Vertex Ressourcen ausgelesen.
+Was hierbei festgestellt werden kann ist, das eine doppelte Indexierung notwendig ist, und somit zwei Buffer ausgelesen werden müssen, um einen Vertex zu lesen.
+In einem späteren Abschnitt wird dieses Problem mithilfe von Duplizierung der Vertices gelöst.
+
+\subsubsection*{Primitive Index}
+Der Buffer meshlet\_indices ist für die Primitiven der Meshlets zuständig.
+Ein herkömmlicher Index Buffer enthält Ganzzahlen ohne Vorzeichen zwischen 0 - \textit{VertexCount - 1}.
+Die hier jedoch eine Indexierung auf Meshlet Ebene vorliegt, müssen diese Werte bei gleicher Buffergröße angepasst werden.
+Die Werte reichen nun anstatt von 0 - \textit{VertexCount}, von 0 - \textit{MaxPrimitiveCount - 1}.
+Das bedeutet, wenn Meshlets mit einer Vertex Anzahl von 64 und Primitiven Anzahl von 128 generiert werden, befinden sich in meshlet\_indices lediglich Werte zwischen 0 - 127.
+Um den aktuellen Index eines Meshlets zu erhalten muss ähnlich wie bei den Vertices der lokale Index berechnet werden.
+Dazu wird die Formel
+\begin{equation*}
+localIndex = PrimitiveOffset + localIndex * indicesPerTriangle
+\end{equation*}
+verwendet.
+Da die Ausgabe einen 3-Dimensionalen Vektor für die Primitiven erwartet ist die Variable indicesPerTriangle = 3.
+Nun müssen nur noch die drei Indizes des aktuellen Meshlet Index aus dem Buffer gelesen und gesetzt werden.
+\newline
+Auffällig ist, das die obere Schranke der Werte, die die Indizes enthalten, bedeutend geringer ist gegenüber eines herkömmlichen Index Buffers.
+Der benötigte Speicher eines einzelnen Indizes wird dadurch drastisch reduziert.
+Für einen Index wurden ursprünglich 4-Byte Speicher benötigt.
+Für die meshlet\_indices werden in dem Fall von \textit{V-Dach} = 128 und \textit{I-Dach} = 256 nur 1 Byte pro Index verbraucht.
+Diese Auffälligkeit kann sich zunutze gemacht werden, indem drei Indizes, bzw. eine Primitive in ein 4-Byte Integer verpackt werden.
+Dadurch kann $\frac{2}{3}$/66\% des Speicherbedarfs für den Index Buffer gespart werden.
 
 Mit den Informationen der originalen Vertexdaten und der drei neu generierten Buffer \textit{meshlet\_indices}, \textit{meshlet\_vertices} und \textit{meshlets}, kann nun der Mesh Shader gefüttert werden.
 Zunächst müssen die während des Build-Vorgangs kompilierten Shader gelesen werden.
 Diese enthalten Informationen zum Layout der Root Signature, die daraufhin per API-Call erstellt wird.
-Bevor die Meshlet Daten an den Mesh Shader übergeben werden können, müssen diese in einen GPU Buffer geschrieben werden, damit diese anschließend in den GPU RAM geschrieben werden können.
-Wenn das alles gemacht ist können in der Commandlist der Constant Buffer und die benötigten Meshletdaten über die DirectX12 API-Calls SetGraphicsRootConstantBuffer und SetGraphicsRootShaderRessourceView gesetzt werden.
+Bevor die Meshlet Daten an den Mesh Shader übergeben werden können, müssen diese in einen GPU Buffer geschrieben, und somit in den GPU RAM geschrieben werden.
+Wenn alles erledigt ist, können in der Commandlist der Constant Buffer und die benötigten Meshletdaten über die DirectX12 API-Calls SetGraphicsRootConstantBuffer und SetGraphicsRootShaderRessourceView gesetzt werden.
 
 \subsection{Mesh Shader Implementation}
 \label{subsec:mesh_shader_impl}
@@ -106,27 +143,25 @@ Die Anzahl der Threads wird mittles \textit{[NumThreads(128, 1, 1)]} im Mesh Sha
 [NumThreads(128, 1, 1)]
 [OutputTopology("triangle")]
 void main(
-    in uint gtid : SV_GroupThreadID,
-    in uint gid : SV_GroupID,
+    in uint localIndex : SV_GroupThreadID,
+    in uint meshletIndex : SV_GroupID,
     out vertices VertexOut verts[64],
-    out indices uint3 tris[84]
+    out indices uint3 tris[128]
 )
 {
-  Meshlet m = Meshlets[gid];
-  uint3 primitive;
+  Meshlet m = Meshlets[meshletIndex];
 
   SetMeshOutputCounts(m.VertCount, m.PrimCount);
   
-  if (gtid < m.PrimCount)
+  if (localIndex < m.PrimCount)
   {
-    primitive = GetPrimitive(m, gtid);
-    tris[gtid] = primitive;
+    tris[localIndex] = GetPrimitive(m, localIndex);
   }
   
-  if (gtid < m.VertCount)
+  if (localIndex < m.VertCount)
   {
-    uint vertexIndex = GetVertexIndex(m, primitive[0]);
-    verts[gtid] = GetVertex(gid, vertexIndex);
+    uint vertexIndex = GetVertexIndex(m, localIndex);
+    verts[localIndex] = GetVertex(meshletIndex, vertexIndex);
   }
 }
 \end{lstlisting}
@@ -134,8 +169,17 @@ void main(
 \subsection{Lokale Vertex Buffer}
 \label{subsec:local_vertex_buffers}
 Der Mesh Shader im Codeabschnitt.~\ref{todo} zeigt eine Implementierung in seiner einfachsten Form.
-Der Plan ist jedoch, jedes Meshlet einzeln zu dekodieren, und die dekodierten Meshletdaten direkt zu rendern.
-Dazu müssen Indizes und Vertices angepasst werden.
+Der Plan ist jedoch, jedes Meshlet einzeln zu dekodieren, um die dekodierten Meshletdaten zu rendern.
+Der originale Vertex und Index Buffer müssen dafür angepasst werden.
+In Kap.~\ref{subsec:standard_meshshaderimpl} wurden bereits die benötigten Buffer erklärt, die der Meshoptimizer generiert.
+Vertex und Index Buffer werden mit diesem anpasst, damit jedes Meshlet über die gewünschte Geometrie und Topologie verfügt. \newline
+Um den Punkt der doppelten Indexierung des Vertex Buffers einzugehen, werden in diesem Abschnitt lokale Vertex Buffer für jedes Meshlet generiert.
+Die duplizierten Vertex Daten werden in Kauf genommen, damit sich während des Render Vorgangs ein zusätzlicher Elementzugriff gespart werden kann.
+Brotli-G
+\newline
+Das Ziel ist es, die Vertex Daten auf die generierten Meshlets anzupassen, damit die Vertices der Meshlets sequentiell in einem Buffer liegen, wie es in Abb. illustriert ist.
+
+
 
 
 \subsection{Das auf der GPU zu dekodierende Binärformat}
