@@ -159,10 +159,12 @@ benötigt \newline
 Aus dem Beispiel ergibt sich eine mittlere Codewortlänge von 1,6 \textit{Bits/Symbol} bei einer Huffman Codierung.
 Im Vergleich zu einem FLC werden also 0,4 \textit{Bits/Symbol} gespart. \newline
 
-Die Effektivität der Huffman Codierung nimmt ab, je balancierter der konstruierte Binärbaum ist.
-Im Umkehrschluss bedeutet das, dass eine Huffman Codierung sehr davon profitiert, dass einzelne Symbole eine höhere Auftrittswahrscheinlichkeit besitzen als die anderen Symbole.
-Ändert sich jedoch die Statistik im Laufe der Anwendung, oder wurde diese vorab falsch berechnet, kann eine gute Kompression nicht mehr gewährleistet werden.
-Das bedeutet in einem Extremfall, das einem Symbol ein sehr langes Codewort zugeteilt wurde, weil eine sehr geringe Auftrittswahrscheinlichkeit berechnet wurde, die jedoch aus einer kleinen Teilmenge berechnet wurde, und somit nicht repräsentativ für den gesamten Kontext des Eingabestroms ist.
+Die Effektivität der Huffman-Codierung hängt stark von der Verteilung der Symbole in der Datenquelle ab. Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die Codewörter für die einzelnen Symbole ähnliche Längen haben. In solchen Fällen ist die Huffman-Codierung weniger effektiv, da sie weniger Redundanz in den Daten ausnutzen kann.
+
+Im Gegensatz dazu profitiert die Huffman-Codierung enorm von einer ungleichen Verteilung der Symbole, bei der bestimmte Symbole deutlich häufiger auftreten als andere. Dadurch können kürzere Codewörter für häufige Symbole und längere Codewörter für seltene Symbole verwendet werden, was zu einer besseren Kompression führt.
+
+Allerdings ist die Huffman-Codierung anfällig für Veränderungen in der statistischen Verteilung der Symbole. Wenn sich die Auftrittswahrscheinlichkeiten im Laufe der Anwendung ändern oder wenn sie falsch berechnet wurden, kann dies zu einer Verschlechterung der Kompression führen. Im Extremfall kann es vorkommen, dass das Symbol mit der höchsten Auftrittswahrscheinlichkeit das längste Codewort erhält, was die Effizienz der Codierung erheblich beeinträchtigt. Daher ist es wichtig, dass die Statistik der Symbole regelmäßig überprüft und aktualisiert wird.
+Um das zu bewerkstelligen kann eine adaptive Huffman-Kodierung verwendet werden. Anstelle einer festen Symbolstatistik wird bei der adaptiven Huffman-Kodierung die Statistik nach dem Kodieren eines Symbols überprüft und aktualisiert. Adaptive Algorithmen liefern zu Beginn einer Kodierung noch keine guten Ergebnisse, da die Symbolstatistik bei wenigen Symbolen nicht Aussagekräftig ist \cite{Jeon1998}. 
 
 \subsection{GZIP}
 \label{subsec:gzip}
@@ -177,7 +179,9 @@ Für die Verwendung des GPU Dekodierers wird also eine NVidia Grafikkarte mit de
 Diese erkennt man am RTX Präfix vor der Modellnummer.
 Bei AMD Grafikkarten muss mindestens die RDNA-2 Architektur verbaut sein.
 Mit Grafikkarten aus der AMD RX6000er Reihe für RDNA-2, und der RX7000er Reihe für RDNA-3 kann der GPU Dekodierer verwendet werden.
-Brotli-G definiert ihren GPU Dekodierer in der Shader-Sprache \textit{high-level shader language (HLSL)} und ist als Compute Shader definiert (Kap.~\ref{subsec:compute_shader}).
+Brotli-G definiert ihren GPU Dekodierer in der Shader-Sprache \textit{high-level shader language (HLSL)} und ist als Compute Shader definiert (Kap.~\ref{subsec:compute_shader}). \newline
+
+Da es sich bei Brotli-G um eine Modifikation des Brotli Formats handelt, wurde der Bitstrom des Kodierers angepasst.
 
 
 \subsection{CPU Ebene}

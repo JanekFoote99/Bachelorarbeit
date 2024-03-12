@@ -130,13 +130,20 @@ Wenn alles erledigt ist, können in der Commandlist der Constant Buffer und die 
 Im Codeabschnitt~\ref{lst:shadercode} ist ein einfacher Mesh Shader zu sehen.
 Im Mesh Shader wird die Root Signature entsprechend den Anforderungen gesetzt.
 Minimal wird ein StructuredBuffer für jeden der auf der CPU generierten Meshlet Buffer benötigt.
-Um dem Endresultat 3-Dimensional wirken zu lassen, wird ein ConstantBuffer verwendet, der die\textit{model}, \textit{modelView} und \textit{modelViewProjection} Matrix beinhaltet. 
-Zusätzlich dazu nimmt der Constant Buffer noch ein boolean, um zu steuern, das die Meshlets farbig hervorgehoben werden.
+Um das Endresultat 3-Dimensional wirken zu lassen, wird ein ConstantBuffer verwendet, der die \textit{model}, \textit{modelView} und \textit{modelViewProjection} Matrix beinhaltet.
 Zunächst wird das aktuelle Meshlet aus dem \textit{Meshlet Descriptor Buffer} genommen.
 Die SV\_GroupID stellt in dieser Implementierung den aktuellen Index der Meshlets dar.
 Um den lokalen Index des aktuellen Meshlets zu bekommen, muss die SV\_GroupThreadID verwendet werden.
 Die aktuelle GroupID wird in einzelne Threads unterteilt, damit die GPU sich bei der parallelen Verarbeitung nicht in die queere kommt.
-Die Anzahl der Threads wird mittles \textit{[NumThreads(128, 1, 1)]} im Mesh Shader, oder, falls vorhanden, im Task Shader festgelegt.
+Die Anzahl der Threads wird mittles \textit{[NumThreads(128, 1, 1)]} im Mesh Shader, oder, falls vorhanden, im Task Shader festgelegt. \newline
+
+Zu Beginn eines jeden Mesh Shaders muss die Anzahl der auszugebenden Vertices und Primitives mittels \textit{SetMeshOutputCounts} gesetzt werden \cite{Jobalia2019}.
+Dafür wurde eine Datenstruktur für den Meshlet Descriptor mit der Struktur wie sie in Kapitel.~\ref{subsec:standard_meshshaderimpl} definiert wurde, erstellt.
+Der Meshlet Descriptor mit der aktuellen GroupID wird also aus dem auf CPU Ebene erstellten Buffer gelesen und die Anzahl der Vertices und Primitiven festgelegt.
+Welchen fundamentalen Nutzen der Meshlet Descriptor für einen Mesh Shader hat kann man hier erkennen.
+Die aktuellen Group wird in Threads aufgeteilt, die sich jeweils um einen Vertex und eine Primitive kümmern.
+Dazu wird überprüft ob sich die GroupThreadID noch innerhalb der Grenzen des aktuellen Meshlets befindet.
+Sollte dies der Fall sein, liest der Mesh Shader mithilfe des Meshlet Descriptors und der GroupThreadID Vertex und Primitive aus.
 
 \newpage \begin{lstlisting}[language = C++, caption = Standard Mesh Shader main-Methode, label=lst:shadercode]
 [RootSignature(ROOT_SIG)]
@@ -175,13 +182,16 @@ In Kap.~\ref{subsec:standard_meshshaderimpl} wurden bereits die benötigten Buff
 Vertex und Index Buffer werden mit diesem anpasst, damit jedes Meshlet über die gewünschte Geometrie und Topologie verfügt. \newline
 Um den Punkt der doppelten Indexierung des Vertex Buffers einzugehen, werden in diesem Abschnitt lokale Vertex Buffer für jedes Meshlet generiert.
 Die duplizierten Vertex Daten werden in Kauf genommen, damit sich während des Render Vorgangs ein zusätzlicher Elementzugriff gespart werden kann.
-Brotli-G
 \newline
-Das Ziel ist es, die Vertex Daten auf die generierten Meshlets anzupassen, damit die Vertices der Meshlets sequentiell in einem Buffer liegen, wie es in Abb. illustriert ist.
+Das Ziel ist es, die Vertex Daten auf die generierten Meshlets anzupassen, damit die Vertices der Meshlets sequentiell in einem Buffer liegen, wie es in Abb.~\ref{fig:local_vertex_buffer} illustriert ist.
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.375]{Bilder/local_vertex_buffer.png}
+  \caption[Lokaler Vertex Buffer]{\textbf{Lokaler Vertex Buffer} Die Abbildung zeigt eine Konstruktion eines Vertex Buffers der die Vertices aller Meshlets sequentiell beinhaltet.}
+  \label{fig:local_vertex_buffer}
+\end{figure}
 
-
-
-
-\subsection{Das auf der GPU zu dekodierende Binärformat}
-\label{subsec:binary_format}
-[Eventuell nicht als eigenes Unterkapitel]
+In der Methode GetVertexIndex musste zunächst ein \textit{Unique Vertex Index} berechnet werden, der den Index für den globalen Vertex Buffer bereitgestellt hat.
+Mithilfe des lokalen Vertex Buffers ist dieser Schritt nicht mehr nötig.
+Der korrekte Vertex Index kann nun lediglich mit dem Vertex Offset des Meshlets und der GroupThreadID berechnet werden.
+Mit diesem Index ist ein direkter Zugriff auf die Vertex Ressourcen möglich, ohne den \textit{Unique Vertex Index} zu benötigten.
