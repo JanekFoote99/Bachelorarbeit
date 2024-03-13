@@ -1,7 +1,23 @@
-\section{Kompressionsstandard BrotliG}
+\section{Kompressionsstandard Brotli-G}
 \label{sec:brotlig}
-asdfasdf
+In vielen Anwendungsfällen wird auf Kombinationen von Kompressionsalgorithmen gesetzt.
+[QUELLE für Kompression]
+Auch Brotli macht sich mehrere Algorithmen zunutze.
+Google hat für die Entwicklung von Brotli eine eigene Implementierung des Deflate Algorithmus verwendet.
+Das Ergebnis der Kompression besteht aus einer Reihe an Meta Blöcken.
+Anstelle der kompletten Daten teilt Brotli den Datensatz in logische Blöcke ein, damit ein besseres Kompressionsergebnis erzielt werden kann.
+So wird jeder dieser Blöcke einzeln komprimiert, und zusammen mit den Header Informationen für die gesamten Daten in das Brotli Format geschrieben.
+Um die Daten zu komprimieren wird eine Kombination des LZ77 Algorithmus verwendet, um duplizierte Zeichenketten zu erkennen, und einer Huffman-Kodierung um Präfix freie Codewörter zu generieren.
+Jeder Meta Block hat dabei seine eigene Huffman-Kodierung.
+So sind Überschneidungen von Codewörtern in unterschiedlichen Meta Blöcken möglich, während ein Präfix freier Code in einem Meta Block gewährleistet ist.
+Der LZ77 Algorithmus hat zusätzlich noch die Möglichkeit, in einem zuvor kodierten Meta Block nach duplizierten Zeichenketten suchen, sollte diese Zeichenkette noch im Schiebefenster vorhanden sein \cite{rfc7932}. \newline
 
+Um eine parallele Dekompression zu ermöglichen, musste AMD bei Brotli-G einige Veränderungen an den Algorithmen vornehmen.
+Zum einen kann die Größe des Schiebefensters abweichen.
+Das kommt auf die Größe der Eingabedaten an.
+Um die Parallelisierung der Dekompression zu gewährleisten muss auf die Verwendung von vorherigen Meta Blöcken verzichten, und das Schiebefenster zu Beginn eines neuen Meta Blocks zurücksetzen \cite{AMD2024}. \newline
+
+Um die verwendeten Algorithmen besser zu verstehen werden sie in den folgenden Kapiteln genauer betrachtet.
 
 \subsection{LZ77}
 \label{subsubsec:lz77}
@@ -37,8 +53,8 @@ Nach jedem Schritt wird das Schiebefenster um die Lauflänge der kodierten Symbo
 \subsubsection{Kodierung eines Codewortes}
 \label{subsubsec:kodierung_codewort}
 Zur Veranschaulichung wird das Codewort \glqq laufenraufen\grqq\ mit dem LZ77 Algorithmus kodiert und anschließend wieder dekodiert.
-Daten- und Vorschaufenster haben in diesem Beispiel eine Kapazität von jeweils sechs Symbolen.
-\begin{table}[]
+Daten- und Vorschaufenster haben in diesem Beispiel eine Kapazität von jeweils sechs Symbolen. \newpage
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -52,10 +68,12 @@ laufe                 & nraufe                   & n                            
 laufen                & raufen                   &                              & (0, 0)r            \\ \hline
 aufenr                & aufen                    &                              & (6, 4)n            \\ \hline
 \end{tabular}
+\label{tab:lz77_encode_table}
+\caption{LZ77 Kodierungs Beispiel}
 \end{table}
 
 Eine Besonderheit die zunächst nicht intuitiv ist, ist die Konstruktion des letzten Codewortes in diesem Beispiel.
-Die Symbolsequenz \glqq aufen\grqq\ mit der Kodierung \textit{6, 4)n} könnte auch mit einem Offset von fünf kodiert werden.
+Die Symbolsequenz \glqq aufen\grqq\ mit der Kodierung \textit{(6, 4)n} könnte auch mit einem Offset von fünf kodiert werden.
 Im Normalfall würde die Symbolsequenz auch so kodiert werden.
 Da jedoch das Symbol \glqq n\grqq\ das letzte Symbol des zu kodierenden Worts ist, und es so kein weiteres, zu kodierendes Symbol gibt, muss die Länge um eins reduziert werden, und das letzte Symbol kodiert werden. \newline
 
@@ -65,12 +83,22 @@ Die weiteren Iterationen der Lempel-Ziv Algorithmen haben statt einem lokalen W�
 Durch die große Anzahl an Vergleichen erreicht der LZ77 Algorithmus ein besseres Kompressionsverhältnis als der LZ78 Algorithmus, benötigt für die Kompression jedoch länger.
 Wie lange das Komprimieren der Daten dauert ist jedoch nicht wichtig für diese Arbeit.
 Der interessante Punkt ist die Dekompressionsgeschwindigkeit.
-Der LZ77 Algorithmus ist bedeutend schneller bei der Dekomprimierung als bei der Komprimierung \cite{Choudhary2015}.
+Der LZ77 Algorithmus ist bedeutend schneller bei der Dekomprimierung als bei der Komprimierung \cite{Choudhary2015}. \newpage
 
 \subsubsection{Dekodierung eines Codeworts}
 \label{subsubsec:dekodierung_codewort}
-In diesem Abschnitt soll aus der Kodierung wieder das zuvor festgelegte Codewort generiert werden.
-\begin{table}[]
+In diesem Abschnitt soll aus der Kodierung das zuvor festgelegte Codewort dekodiert werden.
+Als Ergebnis aus der Kodierung erhalten wir den Ausgabestrom: \newline
+ \textit{(0, 0)l}, \textit{(0, 0)a}, \textit{(0, 0)u}, \textit{(0, 0)f}, \textit{(0, 0)e}, \textit{(0, 0)n}, \textit{(0, 0)r}, \textit{(6, 4)n}. \newline
+Jetzt gilt es, das Datenfenster zu füllen.
+In einem Schritt der Dekodierung wird das Datenfenster überprüft, sollte Offset und Lauflänge ungleich 0 sein.
+Falls vorhanden werden die Daten des Datenfensters mit dem Symbol der aktuell zu dekodierenden Symbol dem Codewort hinzugefügt.
+Im nächsten Schritt wird die Symbolsequenz an die Symbole des Datenfensters verkettet, bis dieses voll ist.
+Anhand des letzten Schrittes der Dekompression sieht man wie der Algorithmus eine duplizierte Zeichenkette erkennt.
+In diesem Beispiel wird die Zeichenkette \textit{aufe} mit einem Offset von 6 und einer Lauflänge von 4 aus dem Datenfenster gelesen, und mit dem Symbol \textit{n} verkettet.
+Die Dekodierung ist nach diesem Schritt abgeschlossen.
+\newline
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
@@ -83,7 +111,10 @@ In diesem Abschnitt soll aus der Kodierung wieder das zuvor festgelegte Codewort
 (0, 0)n            & laufe                         & laufen            \\ \hline
 (0, 0)r            & laufen                        & laufenr           \\ \hline
 {\color[HTML]{009901}(6, 4)n}            & {\color[HTML]{009901} aufe}nr & laufenr{\color[HTML]{009901} aufen}      \\ \hline
+\textbackslash 0   & raufen 					   & laufenraufen 		\\ \hline
 \end{tabular}
+\label{tab:lz77_decode_table}
+\caption{Dekodierung mit dem LZ77-Algorithmus}
 \end{table}
 
 Wie zu sehen ist, ist der LZ77 Algorithmus sowohl leicht verständlich als auch effektiv, wodurch er seinen Nutzen in vielen Anwendungen findet.
@@ -170,6 +201,7 @@ Um das zu bewerkstelligen kann eine adaptive Huffman-Kodierung verwendet werden.
 \label{subsec:gzip}
 Brotli-G misst sich mit anderen Kompressionsstandards wie GZip und Deflate.
 Der Deflate Algorithmus beschreibt eine Kombination aus dem LZ77 Algorithmus und der Huffman Codierung
+[Wahrscheinlich kein eigenes Kapitel. Lieber Deflate Algorithmus in anderen Kapiteln erwähnen]
 
 \subsection{Brotli-G Compute Shader}
 \label{subsec:brotlig_compute}
