@@ -122,13 +122,13 @@ Seine Weiterentwicklungen nennen sich LZ78 und LZW, die zwar dem LZ77 Algorithmu
 In Kombination mit anderen Techniken wie der Huffman Codierung bildet der LZ77-Algorithmus jedoch die Grundlage vieler leistungsstarker Kompressionsstandards, die heute in vielen Applikationen zu finden sind [QUELLE!!!]. \newline
 
 
-\subsection{Huffman Codierung}
+\subsection{Huffman-Kodierung}
 \label{subsec:huffman}
-Eine gewisse Ähnlichkeit zu dem in der Einleitung angerissenen Thema des Morse Codes enthält die von Brotli verwendete Huffman Codierung.
-Die Huffman Codierung ist eine Methode zur verlustfreien Datenkompression und gehört zur Art der Codewort basierten Entropiekodierung.
+Eine gewisse Ähnlichkeit zu dem in der Einleitung angerissenen Thema des Morse Codes enthält die von Brotli verwendete Huffman-Kodierung.
+Die Huffman-Kodierung ist eine Methode zur verlustfreien Datenkompression und gehört zur Art der Codewort basierten Entropiekodierung.
 Ähnlich wie beim Morse Code, werden Symbole durch Bitfolgen substituiert.
 Was beim Morse Code als langes und kurzes Signal galt, ist im Huffman Code eine 0 oder 1.
-Mit der Huffman Codierung werden häufig auftretende Symbole durch kurze Bitfolgen dargestellt.
+Mit der Huffman-Kodierung werden häufig auftretende Symbole durch kurze Bitfolgen dargestellt.
 Dementsprechend erhalten Symbole mit geringer Auftrittswahrscheinlichkeit ein langes Codewort.
 Bei der Betrachtung des Morse Codes fällt auf, dass nicht jeder Buchstabe die selbe Anzahl an Signalen beansprucht.
 Die Codewörter im Morse Code haben sich nämlich ebenfalls die Eigenschaft der Auftrittswahrscheinlichkeiten zunutze gemacht.
@@ -137,21 +137,21 @@ Das \glqq E\grqq\ wird mit einem kurzen, während das \glqq T\grqq\ vom langen S
 Mithilfe dieser Eigenschaft verbrauchen Symbole, die häufig auftreten, weniger Platz im Bitstrom \cite{Moffat2019}.
 Histogramm ....
 
-\subsubsection{Konstruktion einer Huffman Codierung}
+\subsubsection{Konstruktion einer Huffman-Kodierung}
 \label{subsubsec:konstruktion_huffman}
 Zur Konstruktion eines Huffman Codes wird ein Binärbaum generiert.
 Die zu kodierenden Symbole werden als Blätter des Baumes betrachtet.
-Der Baum wird sozusagen von \glqq unten nach oben\grqq\ aufgebaut.
+Der Baum wird sozusagen von \glqq unten nach oben\grqq\ bzw. von \glqq Blätter nach Wurzel\grqq aufgebaut. \newline
 In jedem Schritt werden die zwei Symbole oder Knoten mit der geringsten Auftrittswahrscheinlichkeit zu einem neuen Knoten verbunden.
-Die Auftrittswahrscheinlichkeit des neu erstellten Knotens ist die Summe der verbundene Symbole/Knoten.
-Sobald die Wurzel des Baumes erreicht ist, also die Auftrittswahrscheinlichkeit bei 1 liegt, ist die Huffman Codierung abgeschlossen.
+Die Auftrittswahrscheinlichkeit des neu erstellten Knotens ist die Summe der Auftrittswahrscheinlichkeiten der verbundene Symbole/Knoten.
+Sobald die Wurzel des Baumes erreicht ist, also die Auftrittswahrscheinlichkeit bei 1 liegt, ist die Huffman-Kodierung abgeschlossen.
 Jedem Zweig des Baums wird zusätzlich eine 0 oder 1 zugewiesen.
-In welchem Muster das geschieht, ist nicht wichtig und kann von Implementierung zu Implementierung abweichen.
-Wichtig ist nur zu beachten, das dies im gesamten Baum konsistent durchgezogen wird (Linker Kindknoten 0, rechter Kindknoten 1 oder umgekehrt).
-Die Codewörter für jedes Symbol sind abzulesen, indem die Bitwerte der Zweige einander gereiht werden, beginnend von der Wurzel.
+Ob der linke Kindknoten die 0 und der rechte Kindknoten die 1 bekommt, oder anders herum ist nicht wichtig, und kann von Implementierung zu Implementierung abweichen.
+Wichtig ist nur zu beachten, das dies im gesamten Baum konsistent durchgezogen wird.
+Die Codewörter für jedes Symbol sind abzulesen, indem die Beschriftungen der Zweige als ein Bitstrom interpretiert werden, beginnend von der Wurzel.
 
 Um den Vorteil dieser Eigenschaft zu Veranschaulichen, kann ein Vergleich mit dem \textit{fixed length Code (FLC)} hilfreich sein.
-Anders als \textit{Variable Length Code (VLC)} Verfahren wie die Huffman Codierung, wird jedem Symbol eines FLCs ein Codewort fester Länge zugewiesen.
+Anders als \textit{Variable Length Code (VLC)} Verfahren wie die Huffman-Kodierung, wird jedem Symbol eines FLCs ein Codewort fester Länge zugewiesen.
 Die Auftrittswahrscheinlichkeit spielt bei der Erstellung von Codewörtern also keine Rolle.
 Um einen Vergleich zu ziehen kann die mittlere Codewortlänge des Alphabets, mit folgenden Symbolen betrachtet werden.
 
@@ -177,30 +177,59 @@ Die Konstruktion des Binärbaums, aus dem die Codewörter entnommen werden könn
 \begin{figure}[htb]
   \centering  
   \includegraphics[scale=0.4]{Bilder/Huffmancode_beispiel.png}
-  \caption[Huffman Code Beispiel]{\textbf{Erstellen eines Huffman Codes} Die Abbildung zeigt die Konstruktion eins Binärbaums und der daraus resultierenden Codewörter für die Symbole}
+  \caption[Huffman Code Beispiel]{\textbf{Erstellen eines Huffman Codes} Die Abbildung zeigt die Konstruktion eines Binärbaums und der daraus resultierenden Codewörter für die Symbole}
   \label{fig:huffman_example}
 \end{figure}
 
-Um die mittlere Codewortlänge einer Huffman Codierung zu berechnen, wird die Formel
+\subsubsection{Resultate einer Huffman-Kodierung}
+\label{subsec:huffman_res}
+Aus diesem Beispiel kann der Nutzen der Huffman-Kodierung anhand von Werten ausgedrückt werden. \newline
+Um die mittlere Codewortlänge einer Huffman-Kodierung zu berechnen, wird die Formel
 \begin{equation*}
 \bar{l} = \sum_{i=1}^{n} p_i \cdot l_i
 \end{equation*}
 benötigt \newline
 
-Aus dem Beispiel ergibt sich eine mittlere Codewortlänge von 1,6 \textit{Bits/Symbol} bei einer Huffman Codierung.
-Im Vergleich zu einem FLC werden also 0,4 \textit{Bits/Symbol} gespart. \newline
+Aus dem Beispiel ergibt sich eine mittlere Codewortlänge von 1,6 \textit{Bits/Symbol} bei einer Huffman-Kodierung.
+Im Vergleich zu einem FLC werden also 0,4 \textit{Bits/Symbol} gespart. 
+Die Formel für das Kompressionsverhältnis lautet:
+\begin{equation*}
+C_r = \frac{\text{Eingabegröße}}{\text{Ausgabegröße}}
+\end{equation*}
 
-Die Effektivität der Huffman-Codierung hängt stark von der Verteilung der Symbole in der Datenquelle ab. Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die Codewörter für die einzelnen Symbole ähnliche Längen haben. In solchen Fällen ist die Huffman-Codierung weniger effektiv, da sie weniger Redundanz in den Daten ausnutzen kann.
+Da sich bei einer Huffman-Kodierung lediglich die Codewortlängen ändern, kann der FLC als Eingabe-, und der Huffman Code als Ausgabegröße in der Formel verwendet werden.
+So ergibt sich ein Kompressionsverhältnis von:
+\begin{equation*}
+C_r = \frac{\lceil \log_2(N) \rceil}{\sum_{i=1}^{n} p_i \cdot l_i}
+\end{equation*}
+% TODO: Problem mit Zeilenumbruch deshalb gerade zwei equations
+\begin{equation*}
+C_r = \frac{2,0 \ \text{Bits/Symbol}}{1,6 \ \text{Bits/Symbol}} = 1,25
+\end{equation*}
 
-Im Gegensatz dazu profitiert die Huffman-Codierung enorm von einer ungleichen Verteilung der Symbole, bei der bestimmte Symbole deutlich häufiger auftreten als andere. Dadurch können kürzere Codewörter für häufige Symbole und längere Codewörter für seltene Symbole verwendet werden, was zu einer besseren Kompression führt.
+Die Effektivität der Huffman-Kodierung hängt stark von der Verteilung der Symbole in der Datenquelle ab. 
+Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die Codewörter für die einzelnen Symbole ähnliche Längen haben. 
+In solchen Fällen ist die Huffman-Kodierung weniger effektiv, da sie weniger Redundanz in den Daten ausnutzen kann.
 
-Allerdings ist die Huffman-Codierung anfällig für Veränderungen in der statistischen Verteilung der Symbole. Wenn sich die Auftrittswahrscheinlichkeiten im Laufe der Anwendung ändern oder wenn sie falsch berechnet wurden, kann dies zu einer Verschlechterung der Kompression führen. Im Extremfall kann es vorkommen, dass das Symbol mit der höchsten Auftrittswahrscheinlichkeit das längste Codewort erhält, was die Effizienz der Codierung erheblich beeinträchtigt. Daher ist es wichtig, dass die Statistik der Symbole regelmäßig überprüft und aktualisiert wird.
-Um das zu bewerkstelligen kann eine adaptive Huffman-Kodierung verwendet werden. Anstelle einer festen Symbolstatistik wird bei der adaptiven Huffman-Kodierung die Statistik nach dem Kodieren eines Symbols überprüft und aktualisiert. Adaptive Algorithmen liefern zu Beginn einer Kodierung noch keine guten Ergebnisse, da die Symbolstatistik bei wenigen Symbolen nicht Aussagekräftig ist \cite{Jeon1998}. 
+Redundanz beschreibt den unnötigen Aufwand zu Repräsentation einer Information.
+Die Aufgabe der Huffman-Kodierung ist die Minimierung der \textit{Codierungsredundanz}.
+
+
+Im Gegensatz dazu profitiert die Huffman-Kodierung enorm von einer ungleichen Verteilung der Symbole, bei der bestimmte Symbole deutlich häufiger auftreten als andere. 
+Dadurch können kürzere Codewörter für häufige Symbole und längere Codewörter für seltene Symbole verwendet werden, was zu einer besseren Kompression führt.
+
+Allerdings ist die Huffman-Kodierung anfällig für Veränderungen in der statistischen Verteilung der Symbole. 
+Wenn sich die Auftrittswahrscheinlichkeiten im Laufe der Anwendung ändern oder wenn sie falsch berechnet wurden, kann dies zu einer Verschlechterung der Kompression führen. 
+Im Extremfall kann es vorkommen, dass das Symbol mit der höchsten Auftrittswahrscheinlichkeit das längste Codewort erhält, was die Effizienz der Codierung erheblich beeinträchtigt. 
+Daher ist es wichtig, dass die Statistik der Symbole regelmäßig überprüft und aktualisiert wird.
+Um das zu bewerkstelligen kann eine adaptive Huffman-Kodierung verwendet werden. 
+Anstelle einer festen Symbolstatistik wird bei der adaptiven Huffman-Kodierung die Statistik nach dem Kodieren eines Symbols überprüft und aktualisiert. 
+Adaptive Algorithmen liefern zu Beginn einer Kodierung noch keine guten Ergebnisse, da die Symbolstatistik bei wenigen Symbolen nicht Aussagekräftig ist \cite{Jeon1998}. 
 
 \subsection{GZIP}
 \label{subsec:gzip}
 Brotli-G misst sich mit anderen Kompressionsstandards wie GZip und Deflate.
-Der Deflate Algorithmus beschreibt eine Kombination aus dem LZ77 Algorithmus und der Huffman Codierung
+Der Deflate Algorithmus beschreibt eine Kombination aus dem LZ77 Algorithmus und der Huffman-Kodierung
 [Wahrscheinlich kein eigenes Kapitel. Lieber Deflate Algorithmus in anderen Kapiteln erwähnen]
 
 \subsection{Brotli-G Compute Shader}
