@@ -195,3 +195,6 @@ In der Methode GetVertexIndex musste zunächst ein \textit{Unique Vertex Index} 
 Mithilfe des lokalen Vertex Buffers ist dieser Schritt nicht mehr nötig.
 Der korrekte Vertex Index kann nun lediglich mit dem Vertex Offset des Meshlets und der GroupThreadID berechnet werden.
 Mit diesem Index ist ein direkter Zugriff auf die Vertex Ressourcen möglich, ohne den \textit{Unique Vertex Index} zu benötigten.
+Dadurch befinden sich zwar duplizierte Vertices im Vertex Buffer, dafür kann sich aber der ganze Buffer mit den \textit{Unique Vertex Indices} gespart werden.
+Darauf folgt noch, das der zusätzliche Elementzugriff des Wegfallenden Buffers nicht mehr notwendig ist, um zu den jeweiligen Meshlet Vertices zu gelangen.
+So besteht jeder einzelne, große Buffer mit allen Elementen sozusagen aus zusammengesetzten, kleinen Meshlet Buffern, die alle benötigten Elemente des jeweiligen Meshlets enthalten.

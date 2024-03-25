@@ -212,6 +212,18 @@ Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die C
 In solchen Fällen ist die Huffman-Kodierung weniger effektiv, da sie weniger Redundanz in den Daten ausnutzen kann.
 
 Redundanz beschreibt den unnötigen Aufwand zu Repräsentation einer Information.
+Wenn man eine Quelle, wie beispielsweise ein Alphabet betrachtet, spricht man von der Redundanz einer Quelle oder \textit{Quellredundanz}.
+Die Quellredundanz ist abhängig von dem Entscheidungsgehalt $\mathit{H_0}$ des Alphabets und der Quellentropie $\mathit{H(X)}$.
+\begin{equation*}
+\Delta R_0 = H_0 - H(X)
+\end{equation*}
+\begin{equation*}
+H_0 = \sum_{i=1}^{n} p_i * \log_2{p_i} , \quad p_i = \frac{1}{n} \ \forall i
+\end{equation*}
+\begin{equation*}
+H_0 = \sum_{i=1}^{n} p_i * \log_2{p_i} , \quad p_i = \frac{1}{n} \ \forall i
+\end{equation*}
+
 Die Aufgabe der Huffman-Kodierung ist die Minimierung der \textit{Codierungsredundanz}.
 
 

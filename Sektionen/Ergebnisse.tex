@@ -1,2 +1,91 @@
 \section{Ergebnisse}
 \label{sec:ergebnisse}
+Dieses Kapitel widmet sich dem Versuch der Arbeit. 
+Im Kap.~\ref{subsec:ablauf} wurde eine grobe Schilderung gegeben, wie die Pipeline aussieht, die das originale 3D-Modell komprimiert bis hin zum Rendern.
+Im ersten Anlauf wurde ein Datensatz, bestehend aus 11 unterschiedlichen 3D-Modellen, durch diese Pipeline geschickt. 
+Dabei wurde der Kompressionsstandard Brotli-G untersucht. 
+Wichtige Gesichtspunkte für die Auswertung sind das Kompressionsverhältnis, und die Geschwindigkeit, in der die komprimierten Dreiecksnetze dekomprimiert werden. 
+Die visuelle Qualität muss im ersten Anlauf zwangsweise unverändert bleiben, da Brotli-G verlustfrei komprimiert (Kap.~\ref{subsec:brotli}). 
+Die Ergebnisse des ersten Ablaufs sind in der nachfolgenden Abb.(einfügen) dokumentiert.
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.5]{Bilder/Ergebnisse_zusammen.png}
+  \caption[Der verwendete Datensatz]{\textbf{Der verwendete Datensatz} Die Abbildung zeigt alle Dreiecksnetze mit der Anzahl an Vertices/Indizes/Meshlets. }
+  \label{fig:mesh_shading_pipeline}
+\end{figure}
+
+Der Datensatz besteht aus vielen unterschiedlichen 3D-Modellen unterschiedlicher Größe. 
+Von einem sehr kleinem Modell der „Fandisk“ mit 136 Meshlets, bis hin zu einem „Welsh Dragon“, der aus ganzen 23.021 Meshlets besteht, werden nun die Ergebnisse des Brotli-G Kodierers ausgewertet und analysiert.
+
+\subsection{Auswertung des Datensatzes}
+\label{subsec:auswertung1}
+Betrachten wir zunächst das Dreiecksnetz mit der geringsten Anzahl an Vertices/Indizes/Meshlets. 
+Die Ergebnisse des Kodierers sind sehr vielversprechend. 
+Die 366.536 Bytes des Originalmodells komprimiert Brotli-G auf 160.200 Bytes, und erreicht somit ein Kompressionsverhältnis von 2,29.
+Auffällig sind hierbei jedoch die Dekompressionszeiten für dieses sehr kleine Modell. 
+Bei der Größe des Modells und der doch sehr hohen Dekompressionszeit für den GPU Dekodierer wird eine Bandbreite von 0,054 GiB/s erreicht, was deutlich weniger ist, als was der PCIE-Bus der GPU zulässt, die für den Versuch verwendet wurde.
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.7]{Bilder/fandisk_ergebniss.png}
+  \caption[Fandisk Kompressionsergebnis]{\textbf{Fandisk Kompressionsergebnis} Das kleinste Dreiecksnetz aus dem Datensatz, und seine Ergebnisse}
+  \label{fig:mesh_shading_pipeline}
+\end{figure}
+
+Um die niedrige Bandbreite zu erklären, können die Ergebnisse des Welsh Dragons betrachtet werden. 
+Dieser besteht aus sehr viel mehr Vertices/Indizes/Meshlets, was sich in der Größe des Modells widerspiegelt. 
+Der Welsh Dragon hat eine Originalgröße von 62406096 Bytes, die auf 31716764 Bytes komprimiert wurde. 
+Das entspricht einem Kompressionsverhältnis von 1,97.
+Viel interessanter hierbei sind jedoch die Dekompressionszeit und die daraus resultierende Bandbreite. 
+Der GPU Brotli-G GPU Dekodierer benötigt nicht unbedingt viel mehr Zeit für den Welsh Dragon (7 ms) gegenüber der Fandisk (3 ms).
+Bei Anbetracht der komprimierten Größe der beiden Dreiecksnetze fällt auf, das der Welsh Dragon sehr viel mehr Daten benötigt. 
+Während die Dekompression des Welsh Dragons etwas mehr als das zweifache der Zeit der Fandisk benötigt, ist die komprimierte Größe des Welsh Dragons etwa 200x so groß wie diese.
+Das Ergebnis davon ist in der Bandbreite zu sehen, die beim Welsh Dragon sehr viel besser ist, jedoch noch immer sehr weit von den gewünschten Werten entfernt ist.
+Die parallele Dekodierung des Brotli-G Dekodierers scheint daher erst bei größeren Datensätzen richtig effektiv zu werden.
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.7]{Bilder/welshdragon_ergebniss.png}
+  \caption[Welsh Dragon Kompressionsergebnis]{\textbf{Welsh Dragon Kompressionsergebnis} Das größte Dreiecksnetz aus dem Datensatz, und seine Ergebnisse}
+  \label{fig:mesh_shading_pipeline}
+\end{figure}
+
+\subsection{Auswertung der quantisierten Vertex-Daten}
+\label{subsec:auswertung2}
+Im zweiten Anlauf werden die Vertex Daten vor der Komprimierung zu 16-Bit floating point values quantisiert.
+Ziel davon ist, die niederwertigen Bits, die nur noch wenig zur Struktur des 3D-Modells beitragen, loszuwerden.
+Die hinteren 16 Bit einer 32 Bit Gleitkommazahl beansprucht genausoviel Speicher wie die vorderen 16 Bit.
+Während die vorderen Bits jedoch die grobe Position des Vertex, oder auch die Richtung der Normalen, sind die niederwertigen Bits für sehr feine details wichtig.
+Wenn es jedoch nicht gerade in Richtung von medizinischen Anwendungen geht, oder allgemeiner beschrieben in Bereiche, in denen diese feine Granularität sehr wichtig ist, sind 16 Bit pro Komponente ausreichend, damit ein Dreiecks visuell ansprechend bleibt. \newline
+
+Um das nochmals zu visualisieren sieht man in Abb.~\ref{fig:bunny} das Stanford Bunny einmal mit 16 und einmal mit 32 Bit Vertex Attributen.
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.45]{Bilder/bunny_quantisiert.png}
+  \caption[Quantisiertes Stanford Bunny]{\textbf{Quantisiertes Stanford Bunny} Die Abbildung zeigt eine Gegenüberstellung des Bunnys mit 32 Bit Vertex Attributen und dem Bunny mit den quantisierten 16 Bit Vertex Attributen }
+  \label{fig:bunny}
+\end{figure}
+
+Bei der Gegenüberstellung sind die Unterschiede kaum erkennbar, was sehr hilfreich ist, wenn die Kompression mit Brotli-G betrachtet wird.
+Um einen Vergleich der Ergebnisse zu ziehen wird wieder der Welsh Dragon zur Auswertung der Kompressionsergebnisse verwendet.
+
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.7]{Bilder/welshdragon_quantized_ergebniss.png}
+  \caption[Welsh Dragon Kompressionsergebnis quantisiert]{\textbf{Welsh Dragon Kompressionsergebnis quantisiert} Die Ergebnisse des quantisierten Welsh Dragon }
+  \label{fig:quantized_welsh_dragon}
+\end{figure}
+
+Im Anhang sind die Ergebnisse für alle Dreiecksnetze aus dem Datensatz ersichtlich.
+Dabei fällt auf, das der Welsh Dragon bei der Betrachtung der Kompressionsverhältnisse kein Einzelfall ist.
+
+\subsection{Auswertung eines großen Dreiecksnetzes}
+\label{subsec:auswertung3}
+Wie in den anderen Versuchen erkannt wurde, wird eine bestmögliche Bandbreite bei großen Dreiecksnetzen erreicht.
+Dafür wird in diesem Abschnitt die Haare des David ausgewertet.
+Für die Versuche wurde eine \textit{RX 6650 XT} von AMD verwendet.
+Diese kann unter optimalen Bedingungen eine maximale Bandbreite von 238 GiB/s erreichen.
+Die Ergebnisse sind 
