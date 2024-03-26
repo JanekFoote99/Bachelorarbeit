@@ -70,7 +70,15 @@ Um das nochmals zu visualisieren sieht man in Abb.~\ref{fig:bunny} das Stanford 
 
 Bei der Gegenüberstellung sind die Unterschiede kaum erkennbar, was sehr hilfreich ist, wenn die Kompression mit Brotli-G betrachtet wird.
 Um einen Vergleich der Ergebnisse zu ziehen wird wieder der Welsh Dragon zur Auswertung der Kompressionsergebnisse verwendet.
+Lediglich die Quantisierung der Vertex Daten spart rund 29\% der Größe vor der Komprimierung.
+Die Originalgröße von 44.727.144 Bytes wird anschließend von Brotli-G auf 17.260.728 Bytes komprimiert, was einem Kompressionsverhältnis von 2,59 entspricht.
+Die Dekomprimierung auf der GPU nimmt mit 6 ms in etwa soviel Zeit in Anspruch wie der Welsh Dragon mit 32 Bit Gleitkommazahlen.
+Dadurch ergibt sich eine Bandbreite von $\mathit{2,706 \ GiB/s}$. \newline
 
+Im Anhang sind die Ergebnisse für alle Dreiecksnetze aus dem Datensatz ersichtlich.
+Dabei fällt auf, das der Welsh Dragon bei der Betrachtung der Kompressionsverhältnisse kein Einzelfall ist.
+Betrachtet man die Ergebnisse von quantisierten und nicht quantisierten Dreiecksnetzen, ist klar zu erkennen, das die quantisierten Dreiecksnetze nicht nur weniger Speicherplatz beanspruchen.
+Das Kompressionsverhältnis ist im Durchschnitt des Datensatzes bei den quantisierten Dreiecksnetzen um $\mathit{18,82\%}$.
 
 \begin{figure}[htb]
   \centering  
@@ -79,13 +87,21 @@ Um einen Vergleich der Ergebnisse zu ziehen wird wieder der Welsh Dragon zur Aus
   \label{fig:quantized_welsh_dragon}
 \end{figure}
 
-Im Anhang sind die Ergebnisse für alle Dreiecksnetze aus dem Datensatz ersichtlich.
-Dabei fällt auf, das der Welsh Dragon bei der Betrachtung der Kompressionsverhältnisse kein Einzelfall ist.
-
 \subsection{Auswertung eines großen Dreiecksnetzes}
 \label{subsec:auswertung3}
 Wie in den anderen Versuchen erkannt wurde, wird eine bestmögliche Bandbreite bei großen Dreiecksnetzen erreicht.
-Dafür wird in diesem Abschnitt die Haare des David ausgewertet.
-Für die Versuche wurde eine \textit{RX 6650 XT} von AMD verwendet.
-Diese kann unter optimalen Bedingungen eine maximale Bandbreite von 238 GiB/s erreichen.
-Die Ergebnisse sind 
+Dafür wird in diesem Abschnitt ein Teil eines großen Dreiecksnetzes des Davids ausgewertet.
+Leider legt Brotli-G eine maximale GPU Buffer Größe von 1 GB fest, wodurch ein maximal zu dekodierender Block eingeschränkt wird.
+Sollte ein größeres Dreiecksnetz dekodiert werden, muss dieses sinngemäß zugeschnitten werden.
+Die Haare des David bestehen aus fünf kleinen Teilstücken, die zusammengetragen eine Größe von rund 760 MB aufweisen, und so einen Großteil der maximalen Buffergröße verwenden.
+Die kleinen Teilstücke wurden auf der CPU nacheinander eingelesen, und in ein gemeinsames Binärobjekt geschrieben, das von Brotli-G kodiert worden ist. \newline
+Brotli-G hat die Größe des Davids von 759.567.128 Bytes auf 326.929.888 Bytes komprimiert, und somit ein Kompressionsverhältnis von 2,32 erreicht.
+Auf der GPU wurde dieses in 65 ms dekomprimiert, wodurch eine Bandbreite von $\mathit{4,682 \ GiB/s}$ erreicht wurde.
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.7]{Bilder/david_ergebnis.png}
+  \caption[David Kompressionsergebnis]{\textbf{David Kompressionsergebnis} Ein Teil von dem großen Dreiecksnetzes des Davids }
+  \label{fig:david_ergebnis}
+\end{figure}
+
