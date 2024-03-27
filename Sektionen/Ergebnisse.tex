@@ -1,8 +1,8 @@
 \section{Ergebnisse}
 \label{sec:ergebnisse}
-Dieses Kapitel widmet sich dem Versuch der Arbeit. 
-Im Kap.~\ref{subsec:ablauf} wurde eine grobe Schilderung gegeben, wie die Pipeline aussieht, die das originale 3D-Modell komprimiert bis hin zum Rendern.
-Im ersten Anlauf wurde ein Datensatz, bestehend aus 11 unterschiedlichen 3D-Modellen, durch diese Pipeline geschickt. 
+Dieses Kapitel widmet sich den Ergebnissen dieser Arbeit. 
+Im Kap.~\ref{subsec:ablauf} wurde eine grobe Schilderung gegeben, wie die Pipeline aussieht, die ein beliebiges 3D-Modell durchläuft, bis es gezeichnet wird.
+Im ersten Anlauf wurde ein Datensatz bestehend aus 11 unterschiedlichen 3D-Modellen durch diese Pipeline geschickt. 
 Dabei wurde der Kompressionsstandard Brotli-G untersucht. 
 Wichtige Gesichtspunkte für die Auswertung sind das Kompressionsverhältnis, und die Geschwindigkeit, in der die komprimierten Dreiecksnetze dekomprimiert werden. 
 Die visuelle Qualität muss im ersten Anlauf zwangsweise unverändert bleiben, da Brotli-G verlustfrei komprimiert (Kap.~\ref{subsec:brotli}). 
@@ -28,7 +28,7 @@ Bei der Größe des Modells und der doch sehr hohen Dekompressionszeit für den 
 
 \begin{figure}[htb]
   \centering  
-  \includegraphics[scale=0.7]{Bilder/fandisk_ergebniss.png}
+  \includegraphics[scale=0.75]{Bilder/ergebnisse/fandisk.png}
   \caption[Fandisk Kompressionsergebnis]{\textbf{Fandisk Kompressionsergebnis} Das kleinste Dreiecksnetz aus dem Datensatz, und seine Ergebnisse}
   \label{fig:mesh_shading_pipeline}
 \end{figure}
@@ -46,7 +46,7 @@ Die parallele Dekodierung des Brotli-G Dekodierers scheint daher erst bei größ
 
 \begin{figure}[htb]
   \centering  
-  \includegraphics[scale=0.7]{Bilder/welshdragon_ergebniss.png}
+  \includegraphics[scale=0.75]{Bilder/ergebnisse/welshdragon.png}
   \caption[Welsh Dragon Kompressionsergebnis]{\textbf{Welsh Dragon Kompressionsergebnis} Das größte Dreiecksnetz aus dem Datensatz, und seine Ergebnisse}
   \label{fig:mesh_shading_pipeline}
 \end{figure}
@@ -59,7 +59,7 @@ Die hinteren 16 Bit einer 32 Bit Gleitkommazahl beansprucht genausoviel Speicher
 Während die vorderen Bits jedoch die grobe Position des Vertex, oder auch die Richtung der Normalen, sind die niederwertigen Bits für sehr feine details wichtig.
 Wenn es jedoch nicht gerade in Richtung von medizinischen Anwendungen geht, oder allgemeiner beschrieben in Bereiche, in denen diese feine Granularität sehr wichtig ist, sind 16 Bit pro Komponente ausreichend, damit ein Dreiecks visuell ansprechend bleibt. \newline
 
-Um das nochmals zu visualisieren sieht man in Abb.~\ref{fig:bunny} das Stanford Bunny einmal mit 16 und einmal mit 32 Bit Vertex Attributen.
+Um die Qualität zu visualisieren, sieht man in Abb.~\ref{fig:bunny} das Stanford Bunny einmal mit 16, und einmal mit 32 Bit Vertex Attributen.
 
 \begin{figure}[htb]
   \centering  
@@ -82,7 +82,7 @@ Das Kompressionsverhältnis ist im Durchschnitt des Datensatzes bei den quantisi
 
 \begin{figure}[htb]
   \centering  
-  \includegraphics[scale=0.7]{Bilder/welshdragon_quantized_ergebniss.png}
+  \includegraphics[scale=0.75]{Bilder/ergebnisse/welshdragon_q.png}
   \caption[Welsh Dragon Kompressionsergebnis quantisiert]{\textbf{Welsh Dragon Kompressionsergebnis quantisiert} Die Ergebnisse des quantisierten Welsh Dragon }
   \label{fig:quantized_welsh_dragon}
 \end{figure}
@@ -100,8 +100,20 @@ Auf der GPU wurde dieses in 65 ms dekomprimiert, wodurch eine Bandbreite von $\m
 
 \begin{figure}[htb]
   \centering  
-  \includegraphics[scale=0.7]{Bilder/david_ergebnis.png}
+  \includegraphics[scale=0.75]{Bilder/ergebnisse/david.png}
   \caption[David Kompressionsergebnis]{\textbf{David Kompressionsergebnis} Ein Teil von dem großen Dreiecksnetzes des Davids }
   \label{fig:david_ergebnis}
 \end{figure}
 
+Auch bei diesem Dreiecksnetz wird zusätzlich noch ein Ergebnis mit quantisierten Vertex Attributen durchgeführt.
+Durch die Quantisierung der Vertex Attribute kann beim David etwas mehr als 200 MB an Speicher reduzieren.
+
+
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.75]{Bilder/ergebnisse/david_q.png}
+  \caption[David Kompressionsergebnis quantisiert]{\textbf{David Kompressionsergebnis quantisiert} Ein Teil von dem großen Dreiecksnetzes des Davids mit quantisierten Vertex Attributen }
+  \label{fig:david_ergebnis}
+\end{figure}
+
+Das Kompressionsverhältnis des quantisierten Davids ist mit 4,67 sehr gut, und dadurch zurückzuführen, das der Scan sehr detailiert 
