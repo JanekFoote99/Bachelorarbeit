@@ -18,7 +18,7 @@ Die Ergebnisse des ersten Ablaufs sind in der nachfolgenden Abb.(einfügen) doku
 Der Datensatz besteht aus vielen unterschiedlichen 3D-Modellen unterschiedlicher Größe. 
 Von einem sehr kleinem Modell der „Fandisk“ mit 136 Meshlets, bis hin zu einem „Welsh Dragon“, der aus ganzen 23.021 Meshlets besteht, werden nun die Ergebnisse des Brotli-G Kodierers ausgewertet und analysiert.
 
-\subsection{Auswertung des Datensatzes}
+\subsection{Die Ergebnisse des Datensatzes}
 \label{subsec:auswertung1}
 Betrachten wir zunächst das Dreiecksnetz mit der geringsten Anzahl an Vertices/Indizes/Meshlets. 
 Die Ergebnisse des Kodierers sind sehr vielversprechend. 
@@ -87,7 +87,7 @@ Das Kompressionsverhältnis ist im Durchschnitt des Datensatzes bei den quantisi
   \label{fig:quantized_welsh_dragon}
 \end{figure}
 
-\subsection{Auswertung eines großen Dreiecksnetzes}
+\subsection{Die Resultate von Michelangelos David}
 \label{subsec:auswertung3}
 Wie in den anderen Versuchen erkannt wurde, wird eine bestmögliche Bandbreite bei großen Dreiecksnetzen erreicht.
 Dafür wird in diesem Abschnitt ein Teil eines großen Dreiecksnetzes des Davids ausgewertet.
@@ -106,8 +106,16 @@ Auf der GPU wurde dieses in 65 ms dekomprimiert, wodurch eine Bandbreite von $\m
 \end{figure}
 
 Auch bei diesem Dreiecksnetz wird zusätzlich noch ein Ergebnis mit quantisierten Vertex Attributen durchgeführt.
-Durch die Quantisierung der Vertex Attribute kann beim David etwas mehr als 200 MB an Speicher reduzieren.
+Die Quantisierung reduziert die Originalgröße des Davids um etwa 200 MB.
+Nachdem das quantisierte Dreiecksnetz von Brotli-G komprimiert wurde, sind von den 544.001.528 Bytes noch 115.287.560 Bytes übrig.
+Daraus ergibt sich das beste Kompressionsverhältnis in dieser Arbeit mit 4,72.
+Dafür ist die Bandbreite wiederum etwas schlechter gegenüber dem David mit 32 Bit Gleitkommazahlen für die Vertex Attribute.
+Aus einer Dekompressionszeit von 37 ms und der Größe von 115,29 MB ergibt sich dafür eine Bandbreite von $\mathit{2,983 \ GiB/s}$. \newline
 
+Anhand der Ergebnisse scheint der Scan des Davids von Michelangelos sehr detailiert ist.
+Das bedeutet, das die kleinen Details des Davids von der Quantisierung entfernt wurden, sodass Brotli-G die Daten schöner komprimieren konnte.
+Hier besteht eine sehr große Differenz der Kompressionsverhältnisse von Originalwerk und dem quantisierten Dreiecksnetz.
+Während das originale Dreiecksnetz schon ein gutes Kompressionsverhältnis von 2,32 aufweist, ist das Ergebnis des quantisierten Dreiecksnetzes mit 4,72 überragend.
 
 \begin{figure}[htb]
   \centering  
@@ -115,5 +123,3 @@ Durch die Quantisierung der Vertex Attribute kann beim David etwas mehr als 200 
   \caption[David Kompressionsergebnis quantisiert]{\textbf{David Kompressionsergebnis quantisiert} Ein Teil von dem großen Dreiecksnetzes des Davids mit quantisierten Vertex Attributen }
   \label{fig:david_ergebnis}
 \end{figure}
-
-Das Kompressionsverhältnis des quantisierten Davids ist mit 4,67 sehr gut, und dadurch zurückzuführen, das der Scan sehr detailiert 

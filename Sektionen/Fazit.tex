@@ -4,8 +4,30 @@ Für die Versuche wurde eine \textit{RX 6650 XT} von AMD verwendet.
 Diese kann unter optimalen Bedingungen eine maximale Bandbreite von 238 GiB/s erreichen.
 Die Ergebnisse sind 
 
+Die Bandbreite scheint höher auszufallen, je größer die komprimierte Größe des Dreiecksnetzes ist.
+
 Wie in den Ergebnissen zu sehen bietet die Quantisierung dazu noch eine nicht zu verachtende Reduktion der Speichergröße.
 Die Kombination mit der Kompression mit Brotli-G bietet dazu noch bessere Ergebnisse der komprimierten Größe, aufgrund von dem nicht kodieren müssen der niederwertigen Bits, die nur rauschen verursachen.
 
+\subsection{Bewertung der Ergebnisse}
+\label{subsec:bewertung}
+
+Tiefpassfilter
+
 \subsection{Ausblick}
 \label{subsec:ausblick}
+Kurz vor Abgabe gab es eine neue Brotli-G Version 
+
+Zur zusätzlichen Datenreduktion bietet sich noch das packen der Indizes bei Meshlets
+
+Wie zu sehen ist ergeben sich durch die Komprimierung mittels Brotli-G gute Kompressionsverhältnisse.
+Die Auswertung der Ergebnisse ergibt zudem, das weitere Verfahren zur Datenkompression nicht nur zur direkten Datenreduktion führen kann, sondern zusätzlich die Komprimierung mit Brotli-G verbessern kann.
+In dieser Arbeit wurde der Einsatz von der Quantisierung verwendet.
+Andere Verfahren wie die prädiktive Kodierung 
+
+Nach einem Blogpost auf GPUOpen von AMD, wurde die neue Version 1.1 von Brotli-G für den Compressonator Version 4.5 verwendet.
+Die Tests die in dem Blogpost behandelt werden, richten sich zwar an Texturen, die Ergebnisse von der neuen Version mit Brotli-G 1.1 sind dennoch sehenswert.
+Im Vergleich zur alten Version reduziert der Compressonator mit der neuen Brotli-G Version die komprimierten Texturen im Durchschnitt um weitere 10\% - 15\%, in besonders guten Fällen sogar um 20\%.
+Die Brotli-G Version 1.1 wurde leider erst gegen Ende dieser Arbeit veröffentlicht, wodurch alle Ergebnisse dieser Arbeit auf der Version 1.0 von Brotli-G bestehen.
+Zukünftig sollte die neue Brotli-G Version verwendet werden, um künftig bessere Ergebnisse zu erzielen.
+

@@ -213,7 +213,7 @@ url="https://doi.org/10.1007/978-3-322-94769-7_2"
   url          = {https://www.rfc-editor.org/info/rfc7932},
 }
 
-@Article{,
+@Article{AMD2024,
   author = {AMD},
   title  = {Brotli-G Bitstream Format},
   year   = {2024},
