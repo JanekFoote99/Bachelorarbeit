@@ -42,16 +42,16 @@ Die am häufigsten anzutreffene Rechnerarchitektur.
 Bekannter unter den Namen Von-Neumann Architektur bearbeitet diese Architektur die auf dem Speicher befindlichen Daten seriell.
 Man redet auch von skalaren Operationen auf die Daten.
 Rechnerarchitekturen mit SISD sind leicht zu verstehen und die Verarbeitung ist vorhersehbar.
-Der Preis dafür ist jedoch die langsame Geschwindigkeit gegenüber parallelen Architekturen.
+Der Preis dafür ist jedoch eine langsamere Verarbeitungsgeschwindigkeit gegenüber parallelen Architekturen.
 \subsubsection*{SIMD (Single Instruction, Multiple Data)}
 Um die Geschwindigkeit zu erhöhen, werden Daten, auf denen die selbe Operation ausgeübt wird, parallel verarbeitet.
 Das ist bei der Berechnung von Vektoren und Matrizen von Vorteil.
 Betrachten wir die Addition zweier Vektoren, so kann der resultierende Vektor berechnet werden, wenn die einzelnen Komponenten der Vektoren addiert werden (siehe Abb.~\ref{fig:simd_pattern}). Der Vertex Shader macht von dieser diesem Konzept Gebrauch, während dieser seine per-Vertex Operationen ausführt \cite{DalCin1996}.
 \begin{figure}[htb]
   \centering  
-  \includegraphics[scale=1.0]{Bilder/Simd_pattern.jpg}
-  \caption[SIMD Pattern]{\textbf{Parallele Addition von Daten} In der Abbildung ist eine Addition verschiedener Daten zu sehen. Da die selbe Operation ausgeübt wird können die einzelnen Komponenten parallel verarbeitet werden.
-  Abbildung ist aus http://ftp.cvut.cz/kernel/people/geoff/cell/ps3-linux-docs/CellProgrammingTutorial/BasicsOfSIMDProgramming.html }
+  \includegraphics[scale=0.9]{Bilder/Simd_pattern.jpg}
+  \caption[SIMD Pattern]{\textbf{Parallele Addition von Daten} Die Abbildung illustriert das SIMD Prinzip anhand eines Beispiels der Vektoraddition. Dabei wird auf verschiedene Daten (die einzelnen Komponenten des Vektors) eine Operation (in diesem Fall eine Addition) ausgeführt.
+  Die Abbildung stammt aus \cite{Sony2008}}
   \label{fig:simd_pattern}
 \end{figure} 
 \subsubsection*{MISD (Multiple Instruction, Single Data)}
@@ -61,7 +61,17 @@ Für eine lange Zeit war diese Art von Rechnerarchitektur rein theoretisch anzut
 \subsubsection*{MIMD (Multiple Instruction, Multiple Data)}
 Wie auch die SIMD Architektur ist MIMD in Parallelrechnern anzutreffen.
 Das Operationsprinzip von MIMD ist die Datenparallelität.
-Das Funktionsprinzip von MIMD-Rechnern umfasst die gleichzeitige Ausführung von Anweisungen durch mehrere Prozessoren, die entweder über gemeinsame Variablen oder durch Nachrichten miteinander kommunizieren \cite{DalCin1996}.
+Das Funktionsprinzip von MIMD-Rechnern umfasst die gleichzeitige Ausführung von Anweisungen durch mehrere Prozessoren, die entweder über gemeinsame Variablen oder durch Nachrichten miteinander kommunizieren \cite{DalCin1996}. \newline
+
+GPUs sind Parallelrechner, die auf dem SIMD Prinzip basieren.
+Die Many-Core Architektur von GPUs hilft dabei, die richtigen Aufgaben schneller und effizienter auszuführen, als es eine CPU könnte.
+Da GPUs Parallelrechner sind, die auf dem SIMD Prinzip bestehen, sind eben jene Aufgaben gut zugeschnitten, die unter den gleichen Bedingungen mehrfach durchgeführt werden müssen.
+Wie der Name der \textit{Graphics processing unit} vermuten lässt, wurde diese ursprünglich für die Grafikverarbeitung konzipiert.
+Hierbei können die vielen Kerne die selben Operationen auf unterschiedlichen Daten ausführen.
+Die auf Durchsatz ausgerichteten Rechner verwenden das Programmiermodel \textit{Single Program Multiple Data (SPMD)}.
+Mit diesem Programmiermodell wird ein Programm (Beispielsweise ein HLSL Shader) simultan von mehreren Recheneinheiten ausgeführt.
+Zusätzlich dazu werden Threads zur weiteren Effizienzsteigerung in SIMD-Gruppen zusammengefasst \cite{Yilmazer2014}.
+
 TODO später \cite{Jakob2017} \newpage
 
 \subsection{Die traditionelle Rendering Pipeline}
@@ -176,6 +186,8 @@ TODO
 
 \subsection{Quantisierung von Gleitkommazahlen}
 \label{subsec:quantisierung}
+Unter Quantisierung versteht man die Reduktion der Genauigkeit von Signalwerten [QUELLE STRUTZ].
+Sie gehört unter den verlustbehafteten Kompressionsmethoden aus der Datenreduktion.
 
 
 \subsection{Grundbegriffe der Datenkompression}
