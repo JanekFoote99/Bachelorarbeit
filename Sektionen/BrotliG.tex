@@ -69,7 +69,7 @@ laufen                & raufen                   &                              
 aufenr                & aufen                    &                              & (6, 4)n            \\ \hline
 \end{tabular}
 \label{tab:lz77_encode_table}
-\caption{LZ77 Kodierungs Beispiel}
+\caption{LZ77-Kodierung Beispiel}
 \end{table}
 
 Eine Besonderheit die zunächst nicht intuitiv ist, ist die Konstruktion des letzten Codewortes in diesem Beispiel.
@@ -212,8 +212,7 @@ Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die C
 In solchen Fällen ist die Huffman-Kodierung weniger effektiv, da sie weniger Redundanz in den Daten ausnutzen kann.
 
 Redundanz beschreibt den unnötigen Aufwand zu Repräsentation einer Information.
-Wenn man eine Quelle, wie beispielsweise ein Alphabet betrachtet, spricht man von der Redundanz einer Quelle oder \textit{Quellredundanz}.
-Die Quellredundanz ist abhängig von dem Entscheidungsgehalt $\mathit{H_0}$ des Alphabets und der Quellentropie $\mathit{H(X)}$.
+Wenn in diesem Fall eine Quelle, wie beispielsweise ein Alphabet betrachtet, ist von der Redundanz einer Quelle oder der \textit{Quellredundanz} die Rede \ref{subsec:grundbegriffe_datenkompression}.
 \begin{equation*}
 \Delta R_0 = H_0 - H(X)
 \end{equation*}
@@ -256,7 +255,3 @@ Brotli-G definiert ihren GPU Dekodierer in der Shader-Sprache \textit{high-level
 
 Da es sich bei Brotli-G um eine Modifikation des Brotli Formats handelt, wurde der Bitstrom des Kodierers angepasst.
 
-
-\subsection{CPU Ebene}
-\label{subsec:brotlig_cpu}
-Queries Buffers etc

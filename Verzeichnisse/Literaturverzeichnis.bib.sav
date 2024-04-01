@@ -281,4 +281,39 @@ url="https://doi.org/10.1007/978-3-322-94769-7_2"
   url    = {https://learn.microsoft.com/en-us/cpp/cpp/data-type-ranges?view=msvc-170},
 }
 
+@Book{Strutz2009,
+  author    = {Strutz, Tilo},
+  publisher = {Vieweg+Teubner},
+  title     = {Bilddatenkompression},
+  year      = {2009},
+  isbn      = {9783834899866},
+  doi       = {10.1007/978-3-8348-9986-6},
+  url       = {http://dx.doi.org/10.1007/978-3-8348-9986-6},
+}
+
+@InBook{Widrow_Kollár_2008,
+  author    = {Widrow, Bernard and Kollár, István},
+  pages     = {257–306},
+  publisher = {Cambridge University Press},
+  title     = {Basics of Floating–Point Quantization},
+  year      = {2008},
+  booktitle = {Quantization Noise: Roundoff Error in Digital Computation, Signal Processing, Control, and Communications},
+  place     = {Cambridge},
+}
+
+@Article{Microsoft2023,
+  author = {Microsoft},
+  title  = {Typ "float"},
+  year   = {2023},
+  note   = {besucht am 29.03.2024},
+  url    = {https://learn.microsoft.com/de-de/cpp/c-language/type-float?view=msvc-170},
+}
+
+@Article{Disney2021,
+  title = {The History of the Evolving Animation Styles of Disney},
+  year  = {2021},
+  note  = {besucht am 01.04.2024},
+  url   = {https://www.thedisneyclassics.com/blog/animation-styles},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

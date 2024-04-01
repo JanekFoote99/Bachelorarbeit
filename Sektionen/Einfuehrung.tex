@@ -1,15 +1,15 @@
 \section{Einführung}
 
 In der Computergrafik ist die Erzeugung eines Dreiecksnetzes eine gängige Methode zur Generierung von 3D-Modellen. Diese Modelle können in Topologie und Geometrie unterteilt werden. Für die Geometrie werden verschiedene Attribute benötigt. 
-So werden die Positionen, die Normalenvektoren und Texturekoordinaten/Farbwerte für jeden Punkt des Dreiecksnetzes in single-precision floating point values (32 Bit Gleitkommazahlen) gespeichert. 
-Für die korrekte Annordung und Reihenfolge der Knotenpunkte ist die Topologie zuständig. 
+So werden die Positionen, die Normalen und Texturekoordinaten/Farbwerte für jeden Punkt des Dreiecksnetzes in 32 Bit Gleitkommazahlen gespeichert. 
+Für die korrekte Anordnung und Reihenfolge der Knotenpunkte ist die Topologie zuständig. 
 Dabei ist die Datenkompression ein entscheidendes Thema. 
-In einer Welt, in der digitale Daten schon lange ein wichtiges Thema sind, und dennoch immer weiter an Bedeutung gewinnen, ist die effiziente Speicherung und Übertragung ein wichtiger Gesichtspunkt.
-3D Modelle werden so gut wie überall benötigt. 
+In einer Welt, in der digitale Daten schon lange ein wichtiges Thema sind und dennoch immer weiter an Bedeutung gewinnen, ist die effiziente Speicherung und Übertragung ein wichtiger Gesichtspunkt.
+3D-Modelle werden so gut wie überall benötigt. 
 Videospiele und Animationsserien wären ohne nicht vorstellbar. 
 Architekten können ihre Ideen auch ohne Bleistift auf das Papier (oder den Bildschirm) bringen.
 Künstler wollen Modelle erschaffen, die den Eindruck gewinnen wollen, realitätsgetreu zu sein. 
-Die Folge davon ist, dass diese Modelle stetig komplexer werden, und somit ein größerer Speicheraufwand benötigt wird. 
+Die Folge davon ist, dass diese Modelle stetig komplexer werden und somit ein größerer Speicheraufwand benötigt wird. 
 Um dem entgegenzuwirken, werden Methoden verwendet, diese digitalen Informationen zu komprimieren.
 
 \subsection{Geschichtliche Ausarbeitung Thema Datenkompression}
@@ -31,7 +31,7 @@ Dadurch konnte in Krisenmomenten schnell reagiert werden, um so größeren Katas
 
 \subsubsection*{Der Ist-Stand}
 Springen wir in die heutige Zeit sehen wir die Auswirkung von komprimierten Daten.
-Die meisten Menschen denken an JPEGs und PNGs, wenn sie an digitale Bilder denken.
+Die meisten Menschen denken an JPEG und PNG, wenn sie an digitale Bilder denken.
 Bekanntere Videoformate sind MP4, AVI und FLV.
 Bei all diesen Formaten handelt es sich um komprimierte Rohdaten.
 Das Filesystem eines jeden relevanten Betriebssystems komprimiert beim Speichern von Daten diese automatisch.
@@ -76,29 +76,47 @@ Insbesondere Unternehmen im Finanzbereich sind davon abhängig, damit die Datena
 
 \subsection{Steigende Komplexität}
 \label{subsec:steigende_komplexität}
-Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, wodurch die Anforderungen an der Hardware steigen. In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen. Der Wunsch nach realistischeren Modellen in der Animationsfilm und Videospielbranche hat die Dreiecksanzahl von 3D Modellen in die Höhe schießen lassen. 
+Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, wodurch die Anforderungen an der Hardware steigen. In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen. Der Wunsch nach realistischeren Modellen in der Animationsfilm und Videospielbranche hat die Dreiecksanzahl von 3D Modellen in die Höhe schießen lassen. \newline
+
+Das Beispiel der Unterhaltungsbranche hat aufgezeigt, warum Kompression in unserer heutigen Gesellschaft eine große Rolle spielt.
+Um die Relevanz von Kompressionsalgorithmen in dem Kontext von Dreiecksnetzen aufzuzeigen, kann sich ein Beispiel an Videospielen genommen werden.
+Physische Medien waren zu Beginn des 21. Jahrhunderts der Standard, um eine Form der Unterhaltung in den Haushalt zu bekommen.
+Sei es die Kassette um Musik zu hören, die VHS um einen Film zu sehen oder die CD um ein neues Spiel zu spielen.
+All diese physischen Medien haben jedoch nur eine begrenzte Anzahl an Speicherplatz.
+Um das auf dem Cover versprochene Produkt zu liefern, haben die Hersteller zwei Optionen.
+Entweder wurden die Dateien auf mehrere Speichermedien aufgeteilt, oder die Dateien wurden komprimiert.
+In den allermeisten Fällen jedoch, mussten selbst die komprimierten Dateien auf unterschiedlichen Speichermedien aufgeteilt werden.
+Neben all den anderen Assets nehmen unkomprimierte Dreiecksnetze in 3D-Spielen sehr viel Speicherplatz ein.
+
+Und diese Speicheranforderungen steigen weiter und weiter an.
+
+Nicht nur der Speicheraufwand ist ein Problem.
+Um die Ladezeit bei Videospielen zu verkürzen, sind komprimierte Dreiecksnetz die schnell in den GPU RAM geladen werden können, um dort dekomprimiert zu werden, essentiell wichtig.
 
 \subsection{Ziel der Arbeit}
-Wie man Anhand der Geschichte sieht, war die Datenkompression in ihrer frühen Zeit ein wichtiges Tool, um Informationen zu weiterzugeben.
-Dennoch hat und wird sie immer größere Bedeutung finden.
-Durch die rasch zunehmenden Digitalisierung wurden sowohl Massenmedien, die zur Speicherung von Daten dienen und verbesserten Leitungen bis hin zu Glasfaserkabeln, die eine höhere Bandbreite ermöglichen, entwickelt.
-Die Unterhaltungsbranche hat sehr von der Entwicklung profitiert.
-Aber nicht nur in der Bereitstellung ihres Streaming Services haben Kompressionsmethoden eine Relevanz bei Anbieter wie Youtube, Netflix oder Disney+. \newline
+Wie man anhand der Geschichte sieht, war die Datenkompression in ihrer frühen Zeit ein wichtiges Werkzeug, um Informationen weiterzugeben.
+Diese hat im Laufe der Zeit jedoch immer mehr an Bedeutung für den Alltag gewonnen.
+Die rasant fortschreitende Digitalisierung führte zur Entwicklung von verbesserten Speichermedien und Leitungen, die höhere Bandbreiten ermöglichen.
+Die Unterhaltungsbranche hat sehr von der Entwicklung profitiert, jedoch sollen auch Kunden die keinen guten Internetanschluss haben versorgt werden.
+Kompressionsalgorithmen sorgen für eine schnellere und zuverlässige 
+Aber nicht nur in der Bereitstellung ihres Streaming-Services haben Kompressionsmethoden eine Relevanz bei Anbietern wie YouTube, Netflix oder Disney+. \newline
 
 Besonders in westlichen Ländern ist die Firma Walt Disney der wohl bekannteste Herausgeber von Animationsfilmen und -serien.
-In früher Zeit wurden Disney Produktionen von Hand gezeichnet.
+Die Art, wie diese Animationsfilme produziert wurden, änderte sich mit den Möglichkeiten der Technik rapide.
+Die Filme wurden zunächst in Handarbeit gefertigt.
 Da das ein sehr mühseliger und langwieriger Prozess ist, wurde eine neue Technik verwendet, die die Effizienz und Produktionsgeschwindigkeit maßgeblich erhöht.
-Anstatt die Szene von Frame zu Frame zu konstruieren, und so Charaktere und Objekte aus neuen Positionen und Blickwinkeln ständig neu zu zeichnen, wurden die zu Beginn angesprochenen 3D-Modelle entworfen.
-Das hatte zudem zur Folge, das Effekte, die schwer zu zeichnen waren, realistischer in Simulationen zu berechnen waren, wie z.B. die Welleneffekte im Wasser.
+Anstatt die Szene von Frame zu Frame zu konstruieren, und so Charaktere und Objekte aus neuen Positionen und Blickwinkeln neu zu zeichnen, wurden 3D-Modelle für die Charaktere entworfen.
+Das hatte zudem zur Folge, das Effekte, die schwer zu zeichnen waren, realistischer in Simulationen zu berechnen waren, wie z.B. die Welleneffekte im Wasser \cite{Disney2021}. \newline
+
 Weitere Anwendungsfälle für 3D-Modelle in der Unterhaltungsbranche sind Videospiele, visuelle Effekte in Film und Fernsehen und in \textit{Virtual-Reality (VR)} und 3D-Hologramme bei Shows und in Themenparks. 
 3D-Modelle sind auch in anderen Bereichen anzutreffen.
-Architekten können ihre Vorstellung visualisieren, und so den Auftragsgeber ein erstes Bild zur Inneneinrichtung geben.
-3D Drucker können diese Modelle mit Kunststoff herstellen.
-In der Fertigung werden Modelle mittel CNC Fräse robuster hergestellt. \newline
+Architekten können ihre Vorstellung visualisieren, und so den Auftraggeber ein erstes Bild zur Struktur geben.
+3D-Drucker können diese Modelle mit Kunststoff in physischer Form herstellen.
+In Bereichen, in denen Kunststoff nicht robust genug ist, kann Metall mittels CNC-Fräse zu den Modellen geformt werden. \newline
 
 Eine gängige Repräsentation von 3D-Modellen ist die eines Dreiecksnetzes.
-Damit die 3D-Modelle möglichst nah an dem ist, das sich der Künstler vorgestellt hat, können diese Dreiecksnetze eine Größe Anzahl an Dreiecken besitzen.
+Mittels Scans von Formen des echten Lebens wie Statuen, Gebäude und Menschen, können zudem sehr große und detaillierte Dreiecksnetze entstehen, die aus sehr vielen Punkten und Dreiecken bestehen.
 In dieser Arbeit soll der neuartige Kodierungsstandard BrotliG getestet werden.
-Ein beliebiges Dreiecksnetz wird dafür zunächst in viele, kleine mini-Dreiecksnetze zerteilt.
-Die sogenannten \textit{Meshlets} werden in einem eigenen Format gespeichert, das anschließend von BrotliG auf der CPU komprimiert wird.
-Die GPU bekommt die Daten, und dekomprimiert jedes einzelne Meshlet, um das gesamte Mesh abschließend zu Rendern.
+Ein beliebiges Dreiecksnetz wird dafür zunächst in viele, kleine Dreiecksnetze zerteilt.
+Die sogenannten \textit{Meshlets} werden in einem eigenen Format gespeichert, das anschließend von Brotli-G auf der CPU komprimiert wird.
+Die GPU bekommt die Daten, und dekomprimiert die Meshlets, um das gesamte Dreiecksnetz zu Rendern.

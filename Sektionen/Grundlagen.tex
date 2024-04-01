@@ -186,13 +186,61 @@ TODO
 
 \subsection{Quantisierung von Gleitkommazahlen}
 \label{subsec:quantisierung}
-Unter Quantisierung versteht man die Reduktion der Genauigkeit von Signalwerten [QUELLE STRUTZ].
-Sie gehört unter den verlustbehafteten Kompressionsmethoden aus der Datenreduktion.
+Unter Quantisierung versteht man die Reduktion der Genauigkeit von Signalwerten \cite{Strutz2009}.
+Sie gehört unter den verlustbehafteten Kompressionsmethoden aus dem Bereich der Datenreduktion.
+Im Rahmen dieser Arbeit sollen die Vertex Attribute quantisiert werden.
+Die Vertex Attribute bestehen dabei aus einer Position und einer Normalen, die wiederum aus jeweils 3 Gleitkommazahlen bestehen.
+Da Gleitkommazahlen im Gegensatz zu ganzen Zahlen aus 3 Komponenten bestehen, muss zunächst geklärt werden, wie diese quantisiert werden können. \newline
+
+Um eine Gleitkommazahl zu konstruieren, benötigt man ein Bit für das Vorzeichen (\textit{Sign Bit}), eine Anzahl an Bits für den Exponenten und Mantisse.
+In der Programmiersprache \textit{C++} sind für einer 32 Bit Gleitkommazahl 8 Bit für den Exponenten vorgesehen, während die Mantisse aus 23 Bit besteht.
+Der Standard IEEE-754 legt diese Spezifikation für Gleitkommazahlen fest.
+Diese kann jedoch von Compiler zu Compiler abweichen \cite{Microsoft2023}.
+Die Mantisse stellt eine Zahl zwischen 1,0 und 2,0 dar.
+Aus der Mantisse ist der eigentliche Wert einer Gleitkommazahl zu entnehmen.
+Der Exponent einer Gleitkommazahl ist für die Skalierung der Mantisse zuständig.
+Die Mantisse wird mit dem Exponenten multipliziert, um den absoluten Wert der Gleitkommazahl zu erhalten.
+Das Vorzeichenbit entscheidet anschließend, ob die Zahl positiv oder negativ behaftet ist \cite{Widrow_Kollár_2008}. \newline
+
 
 
 \subsection{Grundbegriffe der Datenkompression}
 \label{subsec:grundbegriffe_datenkompression}
+Das Unterkapitel beschäftigt sich mit den Begriffen der Datenkompression, die im Zuge dieser Arbeit Verwendung finden.
 
-Entscheidungsgehalt
-Redundanz
-Entropie
+\subsubsection*{Informationsgehalt}
+Der Informationsgehalt eines Ereignisses beschreibt, wie viele Informationen beim auftreten des benannten Ereignisses gewonnen werden können.
+\begin{equation*}
+I(s_i) = \log_2 \frac{1}{p_i}
+\end{equation*}
+
+\subsubsection*{Entropie}
+
+
+\subsubsection*{Entscheidungsgehalt}
+
+
+\subsubsection*{Kompressionsverhältnis}
+Aus der Relation der ursprünglichen Daten und den kodierten Daten ergibt sich das Kompressionsverhältnis.
+Diese gibt ein gutes Bewertungsmaß, wie gut ein Kompressionsalgorithmus für eine gegebene Quelle funktioniert.
+\begin{equation*}
+C_R = \frac{\text{ursprüngliche Datenmenge}}{\text{kodierte Datenmenge}}
+\end{equation*}
+
+\subsubsection*{Redundanz}
+Als Redundanz bezeichnet man zusätzlichen Aufwand, der für die Repräsentation einer Information nicht benötigt wird.
+Um die von Brotli-G verwendeten Algorithmen zu verstehen, muss die Quell- und Codierungsredundanz definiert werden.
+
+Die \textit{Quellredundanz} beschreibt die zusätzlichen Informationen einer Quelle (einer Sammlung an Symbolen), die nicht benötigt werden.
+Die Quellredundanz ist abhängig von dem Entscheidungsgehalt $\mathit{H_0}$ des Alphabets und der Quellentropie $\mathit{H(X)}$.
+\begin{equation*}
+R_0 = H_0 - H(x)
+\end{equation*}
+
+Unter \textit{Codierungsredundanz} ist die Redundanz zu verstehen, die in den Codewörtern vorherrscht.
+Die Codierungsredundanz ist die Differenz zwischen der durchschnittlichen Datenmenge (beispielsweise die mittlere Codewortlänge) und der Entropie.
+\begin{equation*}
+\Delta R(X) = R - H(x)
+\end{equation*}
+
+\cite{Strutz2009}
