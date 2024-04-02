@@ -192,19 +192,19 @@ benötigt \newline
 
 Aus dem Beispiel ergibt sich eine mittlere Codewortlänge von 1,6 \textit{Bits/Symbol} bei einer Huffman-Kodierung.
 Im Vergleich zu einem FLC werden also 0,4 \textit{Bits/Symbol} gespart. 
-Die Formel für das Kompressionsverhältnis lautet:
+Die Formel für das Kompressionsverhältnis auf Kap.~\ref{subsec:grundbegriffe_datenkompression} lautet:
 \begin{equation*}
-C_r = \frac{\text{Eingabegröße}}{\text{Ausgabegröße}}
+C_R = \frac{\text{Eingabegröße}}{\text{Ausgabegröße}}
 \end{equation*}
 
 Da sich bei einer Huffman-Kodierung lediglich die Codewortlängen ändern, kann der FLC als Eingabe-, und der Huffman Code als Ausgabegröße in der Formel verwendet werden.
 So ergibt sich ein Kompressionsverhältnis von:
 \begin{equation*}
-C_r = \frac{\lceil \log_2(N) \rceil}{\sum_{i=1}^{n} p_i \cdot l_i}
+C_R = \frac{\lceil \log_2(N) \rceil}{\sum_{i=1}^{n} p_i \cdot l_i}
 \end{equation*}
 % TODO: Problem mit Zeilenumbruch deshalb gerade zwei equations
 \begin{equation*}
-C_r = \frac{2,0 \ \text{Bits/Symbol}}{1,6 \ \text{Bits/Symbol}} = 1,25
+C_R = \frac{2,0 \ \text{Bits/Symbol}}{1,6 \ \text{Bits/Symbol}} = 1,25
 \end{equation*}
 
 Die Effektivität der Huffman-Kodierung hängt stark von der Verteilung der Symbole in der Datenquelle ab. 

@@ -16,15 +16,14 @@ Um dem entgegenzuwirken, werden Methoden verwendet, diese digitalen Informatione
 \label{subsec:main_kompression}
 Ursprünglich zur Repräsentation von Daten entwickelt, wurde der Morse Code zu einem der wichtigsten Werkzeuge für die Kommunikation des 19. Jahrhunderts. 
 Bestehend aus zwei Grundbausteinen, einem kurzen und einem langen Signal, konnten einzelne Buchstaben kodiert werden. 
-Erweitert man dieses Alphabet mit einem weiteren \glqq Symbol\grqq\, einer Pause, die zwischen einzelnen Signalsequenzen eingelegt wird, können ganze Sätze übermittelt werden. 
+Erweitert man dieses Alphabet mit einem weiteren Symbol, einer Pause, die zwischen einzelnen Signalsequenzen eingelegt wird, können ganze Wörter und Sätze übermittelt werden. 
 Das bekannteste Werkzeug für den Morse Code ist der Telegraf, mit dem diese Signale über weite Strecken übertragen werden konnten.
 Die Erfindung des Morsecodes findet im 21. Jahrhundert nicht nur seinen Zweck in dramatischen Momenten des in Film und Fernsehens. 
-Es war zeitgleich ein früher und großer Meilenstein und Wegbegleiter für die Kompression einer Datenquelle (in diesem Fall das Alphabet). 
+Es war zeitgleich ein früher und großer Meilenstein und Wegbegleiter für die Kompression einer Datenquelle (in diesem Fall des Alphabets). 
 Durch Untersuchungen einer großen Anzahl an Literatur kann eine Buchstabenhäufigkeit berechnet werden. 
 Diese sagt aus, wie wahrscheinlich es ist, welcher Buchstabe in einem Text folgt, ohne den aktuellen Kontext, in Form von vorgehenden Buchstaben, zu betrachten.
-Da die Wahrscheinlichkeit eines Zeichens abhängig vom Alphabet ist, sollten diese nicht übergreifend verwendet werden. 
+Da die Wahrscheinlichkeit eines Zeichens abhängig vom Alphabet ist, sollten diese nicht übergreifend für andere Alphabete verwendet werden. 
 So sind die Buchstaben \glqq E\grqq\ und \glqq T\grqq\ die Buchstaben des englischen Alphabets, welche die höchste Auftrittswahrscheinlichkeit besitzen, während sich im deutschen Alphabet der Buchstabe \glqq E\grqq\ von der Masse abhebt.
-%Datenkompression problem ausführen: durch ein stop Signal geht eine wichtige Eigenschaft verloren (eventuell binär)
 Der Morse Code hat gezeigt, welchen Nutzen die Kompression von Information beinhaltet.
 Zu Kriegszeiten hat dieser eine effiziente und schnelle Übermittlung von Informationen ermöglicht.
 Dadurch konnte in Krisenmomenten schnell reagiert werden, um so größeren Katastrophen frühzeitig abzuwenden, aber leider auch, solche zu verursachen.
@@ -34,40 +33,40 @@ Springen wir in die heutige Zeit sehen wir die Auswirkung von komprimierten Date
 Die meisten Menschen denken an JPEG und PNG, wenn sie an digitale Bilder denken.
 Bekanntere Videoformate sind MP4, AVI und FLV.
 Bei all diesen Formaten handelt es sich um komprimierte Rohdaten.
-Das Filesystem eines jeden relevanten Betriebssystems komprimiert beim Speichern von Daten diese automatisch.
-Zusätzlich dazu besteht noch die Möglichkeit, seine Daten manuell zu komprimieren mithilfe von Programmen wie 7Zip, WinRar oder WinZip.
+Das Filesystem eines jeden relevanten Betriebssystems komprimiert diese Speichern von Daten automatisch.
+Zusätzlich dazu besteht noch die Möglichkeit, seine Daten manuell zu komprimieren mithilfe von Programmen wie 7-Zip, WinRar oder WinZip.
 Datenkompression kann in so gut wie allen Bereichen angetroffen werden.
 Und die Gründe dafür sind simpel.
 Speicherplatz ist teuer, und das Ressourcenmanagement wird deutlich vereinfacht, wenn die benötigte Hardware minimiert wird.
-Betrachten wir das Streamen von Daten auf dem Beispiel des größten Videostreaming Dienstes Youtube.
-Laut Statistiken werden pro Minute hunderte Stunden an Videomaterial hochgeladen Tendenz steigend (Abb.~).
+Betrachten wir das Streamen von Daten auf dem Beispiel des größten Videostreaming-Dienstes YouTube.
+Laut Statistiken werden pro Minute hunderte Stunden an Videomaterial hochgeladen, Tendenz steigend (siehe Abbildung \ref{fig:youtube}).
 \begin{figure}[htb]
   \centering  
   \includegraphics[scale=0.8]{Bilder/youtube_statistik.png}
-  \caption[Youtube Statistik]{\textbf{Anzahl der Youtube Videos} Die Anzahl an Minuten die auf Youtube hochgeladen werden.
+  \caption[YouTube Statistik]{\textbf{Anzahl der YouTube-Videos} Die Anzahl an Minuten, die auf YouTube hochgeladen werden.
   Abbildung von Statista: https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/ }
   \label{fig:youtube}
 \end{figure}
 Um die Unmengen an Videos zu speichern, benötigt Google riesige Serverfarmen, die auf dem gesamten Globus verstreut sind.
-Eine genaue Zahl ist der Öffentlichkeit nicht bekannt, es steht jedoch außer Frage, dass diese nochmal um einiges höher ausfällt, würde es keine Verfahren zur Datenkompression geben. \newline
+Eine genaue Zahl ist der Öffentlichkeit nicht bekannt, es steht jedoch außer Frage, dass diese nochmal um einiges höher ausfällt, würden die Daten nicht komprimiert werden. \newline
 
-Ein weiterer Gesichtspunkt ist der eigentliche Nutzen von Youtube, dem Streamen von Videos.
-Um ein Video sehen zu können, muss dieses von dem Youtube Server, zum Nutzer, dem Client übertragen werden.
+Ein weiterer Aspekt ist der eigentliche Nutzen von YouTube, nämlich das Abspielen von Videos.
+Um ein Video sehen zu können, muss es vom YouTube-Server dem Client übertragen werden.
 Durch die Komprimierung der Quelldateien sind die zu übertragenden Daten schon geschrumpft.
 Es können jedoch noch weitere Schritte absolviert werden, um die Daten für den Nutzer besser zugänglich zu machen.
 Dazu werden Verfahren wie Trancoding, Transsizing und Transrating verwendet.
 Transcoding beschreibt den Prozess, ein bereits komprimiertes Videoformat in ein anderes, eventuell für den Client besser zugeschnittenes Videoformat zu komprimieren.
-Das sollte jedoch nicht zu oft angewendet werden, da die Qualität beim wiederholten dekomprimieren und komprimieren verloren geht, sollten die Verfahren verlustbehaftet sein. \newline
-In vielen Fällen kann die originale Auflösung vom Endgerät nicht abgespielt werden, und wird deshalb von diesem auf eine niedrigere Auflösung skaliert.
-Beispielsweise wenn das Endgerät lediglich 1080p auflösen kann, aber ein Video in 4K Auflösung gestreamt werden soll.
+Das sollte jedoch nicht zu oft angewendet werden, da die Qualität beim wiederholten Komprimieren und Dekomprimieren verloren geht; sollten die Verfahren verlustbehaftet sein. \newline
+In vielen Fällen kann die originale Auflösung vom Endgerät nicht abgespielt werden und wird deshalb von diesem auf eine niedrigere Auflösung skaliert.
+Beispielsweise wenn das Endgerät lediglich 1080p auflösen kann, aber ein Video in einer Auflösung von 4K wiedergegeben werden soll.
 Trotzdem werden die vollen Daten des Videoformats empfangen.
 Um diese Verschwendung von Bandbreite zu sparen, wird Transsizing verwendet.
-Die originalen Daten werden in eine kleinere Auflösung skaliert, und anschließend übertragen. \newline
+Die originalen Daten werden in eine kleinere Auflösung skaliert und anschließend übertragen. \newline
 Um die Bitrate zu minimieren wird Transrating verwendet.
 So kann die Auflösung beibehalten werden bei jedoch geringere Bitrate.
 Die Verfahren zur Minimierung des Datenstroms hören sich zunächst sehr mächtig an, sind jedoch mit Vorsicht zu genießen.
 Der Vorgang ist nämlich Verlustbehaftet und kann bei zu starker Nutzung zu Artefakten führen.
-Dafür ermöglicht es jedoch Menschen, deren Internetzugang ein Abspielen in hoher Qualität nicht zulässt, den Streaming Anbieter zu nutzen. \newline
+Dafür ermöglicht es jedoch Menschen, deren Internetzugang ein Abspielen in hoher Qualität nicht zulässt, den Streaming-Anbieter zu nutzen. \newline
 
 Neben dem Beispiel von Streaming Anbietern reihen sich noch viele weitere Beispiele, die einen riesigen Vorteil von der Datenkompression ziehen.
 In einem jedem BWL Grundlagenfach wird die Wichtigkeit des Wettbewerbsvorteils vermittelt.
@@ -76,22 +75,28 @@ Insbesondere Unternehmen im Finanzbereich sind davon abhängig, damit die Datena
 
 \subsection{Steigende Komplexität}
 \label{subsec:steigende_komplexität}
-Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, wodurch die Anforderungen an der Hardware steigen. In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen. Der Wunsch nach realistischeren Modellen in der Animationsfilm und Videospielbranche hat die Dreiecksanzahl von 3D Modellen in die Höhe schießen lassen. \newline
-
 Das Beispiel der Unterhaltungsbranche hat aufgezeigt, warum Kompression in unserer heutigen Gesellschaft eine große Rolle spielt.
 Um die Relevanz von Kompressionsalgorithmen in dem Kontext von Dreiecksnetzen aufzuzeigen, kann sich ein Beispiel an Videospielen genommen werden.
 Physische Medien waren zu Beginn des 21. Jahrhunderts der Standard, um eine Form der Unterhaltung in den Haushalt zu bekommen.
 Sei es die Kassette um Musik zu hören, die VHS um einen Film zu sehen oder die CD um ein neues Spiel zu spielen.
 All diese physischen Medien haben jedoch nur eine begrenzte Anzahl an Speicherplatz.
 Um das auf dem Cover versprochene Produkt zu liefern, haben die Hersteller zwei Optionen.
-Entweder wurden die Dateien auf mehrere Speichermedien aufgeteilt, oder die Dateien wurden komprimiert.
-In den allermeisten Fällen jedoch, mussten selbst die komprimierten Dateien auf unterschiedlichen Speichermedien aufgeteilt werden.
-Neben all den anderen Assets nehmen unkomprimierte Dreiecksnetze in 3D-Spielen sehr viel Speicherplatz ein.
+Die Daten können auf mehrere Speichermedien aufgeteilt, oder komprimiert werden.
+Die zwei Optionen schließen sich jedoch nicht gegenseitig aus.
+In den allermeisten Fällen, mussten selbst die komprimierten Dateien auf unterschiedlichen Speichermedien aufgeteilt werden.
+Neben all den anderen Assets nehmen Dreiecksnetze in 3D-Spielen sehr viel Speicherplatz ein.
+So gut wie alles sichtbare in einem 3D-Spiel besteht aus Dreiecksnetzen, beginnend bei Strukturen wie Gebäuden, Spieler und \textit{non-player Characters (NPCs)}, oder das Ambiente mit Kisten, Blumentöpfen und alles was der Künstler modelliert.
+Bei einer Standard CD mit einer Speicherkapazität von 650 MB konnten zu diese Daten zu Beginn gut untergebracht werden. \newline
 
-Und diese Speicheranforderungen steigen weiter und weiter an.
+Mit dem technischen Fortschritt sind auch realistischere Darstellungen in Videospielen möglich.
+Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, die den steigenden Anforderungen der Hardware gerecht werden. 
+In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen.
+Der Wunsch nach realistischeren Modellen in der Animationsfilme und Videospielbranche hat die Dreiecksanzahl von 3D-Modellen in die Höhe schießen lassen.
+Neben den komplexer werdenden Dreiecksnetzen in der Videospielindustrie werden die Texturen für diese hochauflösender.
+Mit der zunehmenden Komplexität steigt auch der Speicherbedarf. \newline
 
-Nicht nur der Speicheraufwand ist ein Problem.
-Um die Ladezeit bei Videospielen zu verkürzen, sind komprimierte Dreiecksnetz die schnell in den GPU RAM geladen werden können, um dort dekomprimiert zu werden, essentiell wichtig.
+Aber nicht nur der Speicheraufwand ist ein Problem.
+Um die Lade- und Renderzeit bei Videospielen zu verkürzen, sind komprimierte Dreiecksnetz die schnell in den GPU RAM geladen werden können, um dort dekomprimiert zu werden, essentiell wichtig.
 
 \subsection{Ziel der Arbeit}
 Wie man anhand der Geschichte sieht, war die Datenkompression in ihrer frühen Zeit ein wichtiges Werkzeug, um Informationen weiterzugeben.

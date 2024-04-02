@@ -213,12 +213,26 @@ Der Informationsgehalt eines Ereignisses beschreibt, wie viele Informationen bei
 \begin{equation*}
 I(s_i) = \log_2 \frac{1}{p_i}
 \end{equation*}
+Es sind mehr Informationen zu gewinnen, wenn das auftretende Ereignis eher Unwahrscheinlich ist.
+Was bedeutet, das der Informationsgehalt eines Ereignisses an Größe gewinnt, je überraschender das Ereignis auftritt.
+Eine Information wird in der Informationstheorie als \textit{beseitigte Unsicherheit} bezeichnet.
 
 \subsubsection*{Entropie}
-
+Die Entropie einer Datenquelle ist der mittlere Informationsgehalt.
+Sie berechnet sich aus der Summe der Informationsgehalte der Symbole, multipliziert mit der Auftrittswahrscheinlichkeit des Symbols.
+\begin{equation*}
+H = \sum_{i = 1}^{K} p_i * log_2 \frac{1}{p_i}
+\end{equation*}
+Der Wert der Entropie profitiert von einer Ungleichverteilung der Auftrittswahrscheinlichkeiten.
+Maximal wird der Wert, wenn eine Gleichverteilung vorherrscht, also wenn die Wahrscheinlichkeiten der Symbole gleich groß sind.
+Eine geringe Entropie kann erzielt werden, wenn die Auftrittswahrscheinlichkeiten stark voneinander variieren, wie es bei einer Glockenkurve der Fall ist. 
 
 \subsubsection*{Entscheidungsgehalt}
-
+Um das Entscheidungsgehalt einer Quelle zu Berechnen, wird der Logarithmus Duales auf die Anzahl der Symbole angewendet.
+\begin{equation*}
+H_0 = \log_2 (K)
+\end{equation*}
+Diese Zahl entspricht der Entropie bei einer Gleichverteilung der Symbole.
 
 \subsubsection*{Kompressionsverhältnis}
 Aus der Relation der ursprünglichen Daten und den kodierten Daten ergibt sich das Kompressionsverhältnis.
