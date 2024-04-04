@@ -1,7 +1,7 @@
 \section{Einführung}
 
 In der Computergrafik ist die Erzeugung eines Dreiecksnetzes eine gängige Methode zur Generierung von 3D-Modellen. Diese Modelle können in Topologie und Geometrie unterteilt werden. Für die Geometrie werden verschiedene Attribute benötigt. 
-So werden die Positionen, die Normalen und Texturekoordinaten/Farbwerte für jeden Punkt des Dreiecksnetzes in 32 Bit Gleitkommazahlen gespeichert. 
+So werden die Positionen, die Normalen und Texturkoordinaten/Farbwerte für jeden Punkt des Dreiecksnetzes in 32 Bit Gleitkommazahlen gespeichert. 
 Für die korrekte Anordnung und Reihenfolge der Knotenpunkte ist die Topologie zuständig. 
 Dabei ist die Datenkompression ein entscheidendes Thema. 
 In einer Welt, in der digitale Daten schon lange ein wichtiges Thema sind und dennoch immer weiter an Bedeutung gewinnen, ist die effiziente Speicherung und Übertragung ein wichtiger Gesichtspunkt.
@@ -29,11 +29,11 @@ Zu Kriegszeiten hat dieser eine effiziente und schnelle Übermittlung von Inform
 Dadurch konnte in Krisenmomenten schnell reagiert werden, um so größeren Katastrophen frühzeitig abzuwenden, aber leider auch, solche zu verursachen.
 
 \subsubsection*{Der Ist-Stand}
-Springen wir in die heutige Zeit sehen wir die Auswirkung von komprimierten Daten.
+Springen wir in die heutige Zeit, sehen wir die Vorteile von komprimierten Daten in der modernen Welt.
 Die meisten Menschen denken an JPEG und PNG, wenn sie an digitale Bilder denken.
 Bekanntere Videoformate sind MP4, AVI und FLV.
 Bei all diesen Formaten handelt es sich um komprimierte Rohdaten.
-Das Filesystem eines jeden relevanten Betriebssystems komprimiert diese Speichern von Daten automatisch.
+Das Filesystem eines jeden in der Industrie verwendeten Betriebssystems komprimiert diese Speichern von Daten automatisch.
 Zusätzlich dazu besteht noch die Möglichkeit, seine Daten manuell zu komprimieren mithilfe von Programmen wie 7-Zip, WinRar oder WinZip.
 Datenkompression kann in so gut wie allen Bereichen angetroffen werden.
 Und die Gründe dafür sind simpel.
@@ -62,10 +62,10 @@ Beispielsweise wenn das Endgerät lediglich 1080p auflösen kann, aber ein Video
 Trotzdem werden die vollen Daten des Videoformats empfangen.
 Um diese Verschwendung von Bandbreite zu sparen, wird Transsizing verwendet.
 Die originalen Daten werden in eine kleinere Auflösung skaliert und anschließend übertragen. \newline
-Um die Bitrate zu minimieren wird Transrating verwendet.
-So kann die Auflösung beibehalten werden bei jedoch geringere Bitrate.
+Um die Bitrate zu minimieren, wird Transrating verwendet.
+So kann die Auflösung bei geringerer Bitrate beibehalten werden.
 Die Verfahren zur Minimierung des Datenstroms hören sich zunächst sehr mächtig an, sind jedoch mit Vorsicht zu genießen.
-Der Vorgang ist nämlich Verlustbehaftet und kann bei zu starker Nutzung zu Artefakten führen.
+Der Vorgang ist nämlich verlustbehaftet und kann bei zu starker Nutzung zu Artefakten führen.
 Dafür ermöglicht es jedoch Menschen, deren Internetzugang ein Abspielen in hoher Qualität nicht zulässt, den Streaming-Anbieter zu nutzen. \newline
 
 Neben dem Beispiel von Streaming Anbietern reihen sich noch viele weitere Beispiele, die einen riesigen Vorteil von der Datenkompression ziehen.
@@ -81,29 +81,31 @@ Physische Medien waren zu Beginn des 21. Jahrhunderts der Standard, um eine Form
 Sei es die Kassette um Musik zu hören, die VHS um einen Film zu sehen oder die CD um ein neues Spiel zu spielen.
 All diese physischen Medien haben jedoch nur eine begrenzte Anzahl an Speicherplatz.
 Um das auf dem Cover versprochene Produkt zu liefern, haben die Hersteller zwei Optionen.
-Die Daten können auf mehrere Speichermedien aufgeteilt, oder komprimiert werden.
+Die Daten können auf mehrere Speichermedien aufgeteilt oder komprimiert werden.
 Die zwei Optionen schließen sich jedoch nicht gegenseitig aus.
-In den allermeisten Fällen, mussten selbst die komprimierten Dateien auf unterschiedlichen Speichermedien aufgeteilt werden.
-Neben all den anderen Assets nehmen Dreiecksnetze in 3D-Spielen sehr viel Speicherplatz ein.
-So gut wie alles sichtbare in einem 3D-Spiel besteht aus Dreiecksnetzen, beginnend bei Strukturen wie Gebäuden, Spieler und \textit{non-player Characters (NPCs)}, oder das Ambiente mit Kisten, Blumentöpfen und alles was der Künstler modelliert.
-Bei einer Standard CD mit einer Speicherkapazität von 650 MB konnten zu diese Daten zu Beginn gut untergebracht werden. \newline
+In den allermeisten Fällen mussten selbst die komprimierten Dateien auf unterschiedliche Speichermedien aufgeteilt werden.
+Neben all den anderen Assets nehmen Dreiecksnetze in 3D-Spielen einen beachtlichen Anteil an Speicherplatz ein.
+So gut wie alles sichtbare in einem 3D-Spiel besteht aus Dreiecksnetzen, beginnend bei Strukturen wie Gebäuden, Spieler und \textit{non-player Characters (NPCs)}, oder das Ambiente mit Kisten, Blumentöpfen und alles, was der Künstler modelliert und im finalen Spiel landen soll.
+Bei einer CD mit einer Speicherkapazität von 650 MB waren diese Daten gut unterzubringen.
+Im Laufe der Zeit wurden diese Spiele jedoch größer.
+Der Ausbau von Internetzugängen hat diesem Problem Abhilfe geschaffen. \newline
 
 Mit dem technischen Fortschritt sind auch realistischere Darstellungen in Videospielen möglich.
 Um die Realität bestmöglich darzustellen, werden Modelle stetig detailreicher, die den steigenden Anforderungen der Hardware gerecht werden. 
-In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die je nach Anwendung, in Echtzeit gerendert werden müssen.
+In einer komplexen Szene können mehrere Millionen Dreiecke sichtbar sein, die, je nach Anwendung, in Echtzeit gerendert werden müssen.
 Der Wunsch nach realistischeren Modellen in der Animationsfilme und Videospielbranche hat die Dreiecksanzahl von 3D-Modellen in die Höhe schießen lassen.
-Neben den komplexer werdenden Dreiecksnetzen in der Videospielindustrie werden die Texturen für diese hochauflösender.
+Neben den komplexer werdenden Dreiecksnetzen in der Videospielbranche werden zudem noch hochauflösendere Texturen verwendet.
 Mit der zunehmenden Komplexität steigt auch der Speicherbedarf. \newline
 
 Aber nicht nur der Speicheraufwand ist ein Problem.
-Um die Lade- und Renderzeit bei Videospielen zu verkürzen, sind komprimierte Dreiecksnetz die schnell in den GPU RAM geladen werden können, um dort dekomprimiert zu werden, essentiell wichtig.
+Um die Lade- und Renderzeit bei Videospielen zu verkürzen, sind komprimierte Dreiecksnetz, die schnell in den GPU-RAM geladen werden können, um dort dekomprimiert zu werden, essenziell wichtig.
 
 \subsection{Ziel der Arbeit}
 Wie man anhand der Geschichte sieht, war die Datenkompression in ihrer frühen Zeit ein wichtiges Werkzeug, um Informationen weiterzugeben.
 Diese hat im Laufe der Zeit jedoch immer mehr an Bedeutung für den Alltag gewonnen.
 Die rasant fortschreitende Digitalisierung führte zur Entwicklung von verbesserten Speichermedien und Leitungen, die höhere Bandbreiten ermöglichen.
-Die Unterhaltungsbranche hat sehr von der Entwicklung profitiert, jedoch sollen auch Kunden die keinen guten Internetanschluss haben versorgt werden.
-Kompressionsalgorithmen sorgen für eine schnellere und zuverlässige 
+Die Unterhaltungsbranche hat sehr von der Entwicklung profitiert, jedoch sollen auch Kunden, die keinen guten Internetanschluss besitzen, versorgt werden.
+Kompressionsalgorithmen sorgen für eine schnellere und zuverlässige Bereitstellung des Services.
 Aber nicht nur in der Bereitstellung ihres Streaming-Services haben Kompressionsmethoden eine Relevanz bei Anbietern wie YouTube, Netflix oder Disney+. \newline
 
 Besonders in westlichen Ländern ist die Firma Walt Disney der wohl bekannteste Herausgeber von Animationsfilmen und -serien.
@@ -111,17 +113,17 @@ Die Art, wie diese Animationsfilme produziert wurden, änderte sich mit den Mög
 Die Filme wurden zunächst in Handarbeit gefertigt.
 Da das ein sehr mühseliger und langwieriger Prozess ist, wurde eine neue Technik verwendet, die die Effizienz und Produktionsgeschwindigkeit maßgeblich erhöht.
 Anstatt die Szene von Frame zu Frame zu konstruieren, und so Charaktere und Objekte aus neuen Positionen und Blickwinkeln neu zu zeichnen, wurden 3D-Modelle für die Charaktere entworfen.
-Das hatte zudem zur Folge, das Effekte, die schwer zu zeichnen waren, realistischer in Simulationen zu berechnen waren, wie z.B. die Welleneffekte im Wasser \cite{Disney2021}. \newline
+Das hatte zudem zur Folge, dass Effekte, die schwer zu zeichnen waren, realistischer in Simulationen zu berechnen waren, wie z.B. die Welleneffekte im Wasser \cite{Disney2021}. \newline
 
-Weitere Anwendungsfälle für 3D-Modelle in der Unterhaltungsbranche sind Videospiele, visuelle Effekte in Film und Fernsehen und in \textit{Virtual-Reality (VR)} und 3D-Hologramme bei Shows und in Themenparks. 
+Weitere Anwendungsfälle für 3D-Modelle in der Unterhaltungsbranche sind Videospiele, visuelle Effekte in Film und Fernsehen und in \textit{Virtual Reality (VR)} und 3D-Hologramme bei Shows und in Themenparks. 
 3D-Modelle sind auch in anderen Bereichen anzutreffen.
-Architekten können ihre Vorstellung visualisieren, und so den Auftraggeber ein erstes Bild zur Struktur geben.
+Architekten können ihre Vorstellung visualisieren und so den Auftraggebern ein erstes Bild zur Struktur geben.
 3D-Drucker können diese Modelle mit Kunststoff in physischer Form herstellen.
 In Bereichen, in denen Kunststoff nicht robust genug ist, kann Metall mittels CNC-Fräse zu den Modellen geformt werden. \newline
 
 Eine gängige Repräsentation von 3D-Modellen ist die eines Dreiecksnetzes.
 Mittels Scans von Formen des echten Lebens wie Statuen, Gebäude und Menschen, können zudem sehr große und detaillierte Dreiecksnetze entstehen, die aus sehr vielen Punkten und Dreiecken bestehen.
-In dieser Arbeit soll der neuartige Kodierungsstandard BrotliG getestet werden.
+In dieser Arbeit soll der neuartige Kodierungsstandard Brotli-G getestet werden.
 Ein beliebiges Dreiecksnetz wird dafür zunächst in viele, kleine Dreiecksnetze zerteilt.
 Die sogenannten \textit{Meshlets} werden in einem eigenen Format gespeichert, das anschließend von Brotli-G auf der CPU komprimiert wird.
-Die GPU bekommt die Daten, und dekomprimiert die Meshlets, um das gesamte Dreiecksnetz zu Rendern.
+Die GPU bekommt die Daten, und dekomprimiert die Meshlets, um das gesamte Dreiecksnetz zu rendern.

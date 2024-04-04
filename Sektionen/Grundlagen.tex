@@ -4,9 +4,9 @@ Obwohl Dreiecksnetze eine effektive Darstellung bieten, 3D-Modelle darzustellen,
 Mithilfe von Brotli-G sollen diese auf der CPU komprimiert, und auf der GPU dekomprimiert werden, sodass diese fertig zur Darstellung sind, ohne viel Bandbreite zu nutzen.
 Damit der Weg von Komprimierung zu Darstellung verständlich ist, müssen einige grundlegende Dinge geklärt werden.
 
-In diesem Grundlagenkapitel werden die von Brotli-G genutzen Algorithmen erläutert.
-Zusätzlich wird ein Ausblick auf die Grafikpipeline gegeben, und die Stellen betrachtet, bei denen weitere Verbesserungen vorgenommen werden können.
-Diese zeigt alle Transformationen, die die Daten eines Dreiecksnetzes von dem GPU Buffer bis zum Bildschirm durchläuft.
+In diesem Grundlagenkapitel werden die von Brotli-G benutzten Algorithmen erläutert.
+Zusätzlich wird ein Ausblick auf die Grafikpipeline gegeben und die Stellen betrachtet, bei denen weitere Verbesserungen vorgenommen werden können.
+Diese zeigt alle Transformationen, die die Daten eines Dreiecksnetzes von dem erreichen des GPU-Buffer bis zum Bildschirm durchlaufen.
 
 \subsection{Brotli Kompressionsstandard}
 \label{subsec:brotli}
@@ -15,10 +15,10 @@ Die AMD Spezifikation bietet parallele Datenverarbeiten nach dem SIMD Prinzip (K
 Zum Verständnis des von AMD veröffentlichten Kompressionsmodells ist zunächst ein Blick auf das Original erforderlich. \newline
 
 Brotli ist ein von Google Research entwickelter Kompressionsstandard, der 2013 veröffentlicht wurde.
-Er ist darauf ausgelegt, Webinhalte effizienter zu komprimieren als ältere Standards wie Gzip oder Deflate.
-BrotliG wurde mit bedacht auf Kompatibilität mit dem offiziellen Brotli entwickelt.
-So sollte Brotli auch in der Lage sein, Inhalte, die mit BrotliG komprimiert wurden, zu entschlüsseln.
-Zu beachten ist, dass dies nur in diese Richtung funktioniert, und somit Brotli das BrotliG Format nicht dekodieren kann  \cite{BrotliG2022}.
+Er ist darauf ausgelegt, Webinhalte effizienter zu komprimieren als ältere Standards wie gzip oder Deflate.
+BrotliG wurde mit Bedacht auf Kompatibilität mit dem offiziellen Brotli entwickelt.
+So sollte Brotli auch in der Lage sein, Inhalte, die mit Brotli-G komprimiert wurden, zu entschlüsseln.
+Zu beachten ist, dass dies nur in dieser Richtung funktioniert, und somit Brotli das Brotli-G Format nicht dekodieren kann  \cite{BrotliG2022}.
 
 Brotli verwendet eine Kombination vieler Kompressionsalgorithmen, um Inhalte effizient zu komprimieren. 
 Brotli's Kern besteht aus einem LZ77 Algorithmus, der in unterschiedlichen Ausführung auch in anderen Kompressionsstandard verwendet wird.
@@ -26,7 +26,7 @@ Der LZ77 Algorithmus wird zusätzlich mittels Huffman Codierung optimiert.
 
 \subsection{Parallele Datenverarbeitung}
 \label{subsec:flynn}
-Michael Flynn unterteilte Rechnerarchitekturen in Kategorien, die Abhängig von der Anzahl der Instruktions- und Datenströme sind. \newline
+Michael Flynn unterteilte Rechnerarchitekturen in Kategorien, die abhängig von der Anzahl der Instruktions- und Datenströme sind. \newline
 Die Instruktions- und Datenströme:
 \begin{enumerate}
 \item[\textit{SI}] (\textbf{S}ingle \textbf{I}nstruction)
@@ -38,15 +38,15 @@ können kombiniert werden. \newline
 
 Dadurch ergeben sich die vier Rechnerarchitekturen \textit{SISD}, \textit{SIMD}, \textit{MISD}, \textit{MIMD}.
 \subsubsection*{SISD (Single Instruction, Single Data)}
-Die am häufigsten anzutreffene Rechnerarchitektur.
-Bekannter unter den Namen Von-Neumann Architektur bearbeitet diese Architektur die auf dem Speicher befindlichen Daten seriell.
+Die am häufigsten anzutreffende Rechnerarchitektur.
+Bekannter unter dem Namen Von-Neumann Architektur, bearbeitet diese Architektur die auf dem Speicher befindlichen Daten seriell.
 Man redet auch von skalaren Operationen auf die Daten.
 Rechnerarchitekturen mit SISD sind leicht zu verstehen und die Verarbeitung ist vorhersehbar.
 Der Preis dafür ist jedoch eine langsamere Verarbeitungsgeschwindigkeit gegenüber parallelen Architekturen.
 \subsubsection*{SIMD (Single Instruction, Multiple Data)}
-Um die Geschwindigkeit zu erhöhen, werden Daten, auf denen die selbe Operation ausgeübt wird, parallel verarbeitet.
+Um die Geschwindigkeit zu erhöhen, werden Daten, auf denen dieselbe Operation ausgeübt wird, parallel verarbeitet.
 Das ist bei der Berechnung von Vektoren und Matrizen von Vorteil.
-Betrachten wir die Addition zweier Vektoren, so kann der resultierende Vektor berechnet werden, wenn die einzelnen Komponenten der Vektoren addiert werden (siehe Abb.~\ref{fig:simd_pattern}). Der Vertex Shader macht von dieser diesem Konzept Gebrauch, während dieser seine per-Vertex Operationen ausführt \cite{DalCin1996}.
+Betrachten wir die Addition zweier Vektoren, so kann der resultierende Vektor berechnet werden, wenn die einzelnen Komponenten der Vektoren addiert werden (siehe Abb.~\ref{fig:simd_pattern}). Der Vertex Shader macht von diesem Konzept Gebrauch, während dieser seine per-Vertex-Operationen ausführt \cite{DalCin1996}.
 \begin{figure}[htb]
   \centering  
   \includegraphics[scale=0.9]{Bilder/Simd_pattern.jpg}
@@ -55,9 +55,10 @@ Betrachten wir die Addition zweier Vektoren, so kann der resultierende Vektor be
   \label{fig:simd_pattern}
 \end{figure} 
 \subsubsection*{MISD (Multiple Instruction, Single Data)}
-Um alle Kombinationen von Daten und Instruktionsströmen zu zeigen wurde auch MISD definiert.
-Die Rechnerarchitektur bezieht sich darauf, das auf nur einem Datenpunkt verschiedene Operationen ausgeführt werden.
-Für eine lange Zeit war diese Art von Rechnerarchitektur rein theoretisch anzutreffen, da weder 
+Um alle Kombinationen von Daten und Instruktionsströmen zu zeigen, wurde auch MISD definiert.
+Die Rechnerarchitektur bezieht sich darauf, dass auf nur einem Datenpunkt verschiedene Operationen ausgeführt werden.
+Für eine lange Zeit war diese Art von Rechnerarchitektur rein theoretisch anzutreffen.
+Grund dafür war, dass kein Nutzen für diese Architektur gesehen wurde \cite{Flynn1996}.
 \subsubsection*{MIMD (Multiple Instruction, Multiple Data)}
 Wie auch die SIMD Architektur ist MIMD in Parallelrechnern anzutreffen.
 Das Operationsprinzip von MIMD ist die Datenparallelität.
@@ -67,58 +68,57 @@ GPUs sind Parallelrechner, die auf dem SIMD Prinzip basieren.
 Die Many-Core Architektur von GPUs hilft dabei, die richtigen Aufgaben schneller und effizienter auszuführen, als es eine CPU könnte.
 Da GPUs Parallelrechner sind, die auf dem SIMD Prinzip bestehen, sind eben jene Aufgaben gut zugeschnitten, die unter den gleichen Bedingungen mehrfach durchgeführt werden müssen.
 Wie der Name der \textit{Graphics processing unit} vermuten lässt, wurde diese ursprünglich für die Grafikverarbeitung konzipiert.
-Hierbei können die vielen Kerne die selben Operationen auf unterschiedlichen Daten ausführen.
-Die auf Durchsatz ausgerichteten Rechner verwenden das Programmiermodel \textit{Single Program Multiple Data (SPMD)}.
-Mit diesem Programmiermodell wird ein Programm (Beispielsweise ein HLSL Shader) simultan von mehreren Recheneinheiten ausgeführt.
+Hierbei können die vielen Kerne dieselben Operationen auf unterschiedlichen Daten ausführen.
+Die auf Durchsatz ausgerichteten Rechner verwenden das Programmiermodell \textit{Single Program Multiple Data (SPMD)}.
+Mit diesem Programmiermodell wird ein Programm (beispielsweise ein HLSL Shader) simultan von mehreren Recheneinheiten ausgeführt.
 Zusätzlich dazu werden Threads zur weiteren Effizienzsteigerung in SIMD-Gruppen zusammengefasst \cite{Yilmazer2014}.
-
-TODO später \cite{Jakob2017} \newpage
+\newpage
 
 \subsection{Die traditionelle Rendering Pipeline}
 \label{subsec:traditionelle_renderingpipeline}
 Um den Nutzen der neu vorgestellten Task- und Mesh-Shader Pipeline zu verstehen, muss zunächst die traditionelle Pipeline dort betrachtet werden, wo sie verbessert werden kann.
-Die Rendering Pipeline besteht aus eine Reihe von programmierbaren (Abb.~\ref{fig:traditional_pipeline} grün dargestellt) und fixed-function (Abb.~\ref{fig:traditional_pipeline} türkis dargestellt) Stages.
-Dazu kommt, das einige dieser Stages optional sind.
+Die Rendering-Pipeline besteht aus einer Reihe an programmierbaren (Abb.~\ref{fig:traditional_pipeline} Grün dargestellt) und fixed-function (Abb.~\ref{fig:traditional_pipeline} Türkis dargestellt) Stages.
+Einige dieser Stages sind optional.
 \begin{figure}[htb]
   \centering  
   \includegraphics[scale=0.43]{Bilder/traditionelle_pipeline.jpg}
-  \caption[traditionelle Rendering Pipeline]{\textbf{traditionelle Rendering Pipeline} \newline Die Abbildung beschreibt den Verlauf durch die einzelnen Shader Stages, die jeder Vertex macht. Entnommen wurde diese aus dem NVidia Blogpost \cite{Kubisch2018}}
+  \caption[traditionelle Rendering Pipeline]{\textbf{traditionelle Rendering Pipeline} \newline Die Abbildung beschreibt den Verlauf durch die einzelnen Shader Stages, die jeder Vertex macht. Entnommen wurde diese aus dem NVIDIA-Blogpost \cite{Kubisch2018}}
   \label{fig:traditional_pipeline}
 \end{figure}
 \newline
-Im GPU Memory angekommen, liest die \textit{Vertex Attribute Fetch} Stage die Vertex Daten aus, und sendet diese an den Vertex Shader.
+Im GPU Memory angekommen, liest die \textit{Vertex Attribute Fetch} Stage die Vertex Daten aus und sendet diese an den Vertex Shader.
 Die Vertex Daten werden dort in die benötigten Koordinatensysteme transformiert und der optionalen Tessellation Stage weitergegeben, falls diese verwendet wird.
 Die Tessellation Stage ist dazu da, Patches von Primitiven in kleinere Primitiven zu unterteilen.
 Der optionale Geometry Shader kann dazu verwendet werden, weitere Vertices zu generieren.
-Im Rasterizer angekommen, werden Primitiven verarbeitet und daraus Fragmente berechnet, denen der Fragment Shader zum Abschluss ihre Farbe gibt. \newline
+Im Rasterisierer angekommen, werden Primitiven verarbeitet und daraus Fragmente berechnet, denen der Fragment Shader zum Abschluss ihre Farbe gibt. \newline
 Im Folgenden werden die einzelnen Stages nochmal genauer erläutert.
 
 \subsubsection{Vertex Shader}
 \label{subsubsec:vertex}
 Zunächst wird der vom Entwickler programmierbare Vertex Shader angesteuert.
-Dieser ist nicht optional, da alles nachfolgende auf den ausgegebenen Vertices aufbaut.
+Dieser ist nicht optional, da alles Nachfolgende auf den ausgegebenen Vertices aufbaut.
 Hier können Operationen auf einzelnen Vertices ausgeführt werden.
 Dafür wird der Vertex Shader für jeden Vertex einzeln aufgerufen.
 Hier zeichnet sich das SIMD Modell der GPU aus (Kap~\ref{subsec:flynn}), da der Vertex Shader von mehreren Prozessoren auf unterschiedlichen Vertices zeitgleich operiert.
 Die Inputs des Vertex Shaders werden mittels \textit{Vertex Attribute Locations} in den Shader eingebunden.
 Der Shader kann dadurch die Positionen, Normalen und Texturkoordinaten von der CPU aufnehmen.
 Eine Einschränkung, die dabei aufkommt, ist das Verhältnis von Eingabe und Ausgabe Vertices.
-Der Shader erwartet, dass für jeden Eingabe Vertex auch ein Vertex ausgegeben wird.
-Die Vertex Position wird für gewöhnlich in den Clip-Space transformiert, und der Pipeline weitergegeben.
+Der Shader erwartet, dass für jeden Eingabe-Vertex auch ein Vertex ausgegeben wird.
+Die Vertex Position wird für gewöhnlich in den Clip-Space transformiert und der Pipeline weitergegeben \cite{Maughan2001}.
 
 \subsubsection{Tessellation Stage}
 \label{subsubsec:tesselation}
 Die Ausgabe Vertices des Vertex Shaders gelangen anschließend in die optionale Tessellation Stage.
-Der generelle use-case ist, einen Patch an Primitiven in wiederum kleinere Primitiven zu verarbeiten. 
-Die Tessellation Stage wird in drei Schritte unterteilt.
-Darunter ist mit dem \textit{Tessellation Control Shader} (TCS) ein optional programmierbarer Schritt, eine fixed-function mit der \textit{Primitive Generation} und einen programmierbaren \textit{Tessellation Evaluation Shader} (TES).
+Der generelle Nutzen ist, einen Patch an Primitiven in wiederum kleinere Primitiven zu verarbeiten. 
+Die Tessellation Stage besteht aus drei Schritten.
+Darunter ist mit dem \textit{Tessellation Control Shader} (TCS) ein optional programmierbarer Schritt, eine fixed-function Stage mit der \textit{Primitive Generation} und einen programmierbaren \textit{Tessellation Evaluation Shader} (TES).
 
 \subsubsection*{Tessellation Control Shader (TCS)}
-Der \textit{Tessellation Control Shader (TCS)} (der wiederum optional ist), ist ein geeigneter Schritt um das \textit{LOD} (Level of Detail) zu berechnen und unter gewissen Voraussetzungen vorab einige Patches zu cullen. 
+Der \textit{Tessellation Control Shader (TCS)} (der wiederum optional ist), ist ein geeigneter Schritt, um das \textit{LOD} (Level of Detail) zu berechnen und unter gewissen Voraussetzungen vorab einige Patches zu cullen. 
 Ein Patch beschreibt eine Anzahl an Primitiven.
-Aus der Subdivision dieses Patches werden weitere Vertices berechnet, die zur Verarbeitung in den nächsten Schritt der Pipeline geschickt werden.
-Im TCS wird der Grad der Tessellation, das Spacing zwischen subdivided Punkten und die gewünschte Topologie festgelegt.
-Genauer gesagt wird hier gesetzt, wie oft die Primitiven unterteilt werden und welche Form diese am Ende haben sollen (triangle, quad, isolines).
+Aus der Subdivision dieses Patches werden weitere Vertices berechnet, die zur Verarbeitung zum nächsten Schritt der Pipeline geschickt werden.
+Im TCS werden der Tessellationsgrad, der Abstand zwischen den Unterteilungen und die gewünschte Topologie festgelegt.
+Genauer gesagt wird hier gesetzt, wie oft die Primitiven unterteilt werden und welche Topologie diese am Ende haben sollen (triangle, quad, isolines).
 
 \subsubsection*{Tessellation Topology Generation (TPG)}
 Mit der fixed-function stage des Tessellation Schritts werden die Primitiven mittels den im TCS bestimmten Parametern unterteilt.
@@ -129,7 +129,7 @@ Diese unterteilt die Patches abhängig von den Berechnungen der TCS.
 Der \textit{Tessellation Evaluation Shader} hat den einfachsten Job und realisiert lediglich die Arbeit, die von den zwei vorherigen Stages verrichtet wurde.
 Die berechneten Koordinaten des TPG werden in dieser Shader Stage interpoliert, um die neuen Vertices zu generieren.
 Abschließend werden die aus der Subdivision berechneten Vertices ausgegeben. 
-Wenn der optionale TCS nicht genutzt wird, werden default Parameter für den TPG benutzt. \cite{cozzi2012opengl}\cite{Carvalho2022}
+Wenn der optionale TCS nicht genutzt wird, werden wendet der TPG Standard Parameter für die Berechnung an \cite{cozzi2012opengl}\cite{Carvalho2022}.
 
 \subsubsection{Geometry Shader}
 \label{subsubsec:geometry_shader}
@@ -138,7 +138,7 @@ Er bekommt eine Primitive als Input, und kann keine oder auch mehr Primitiven au
 Die Fähigkeit zusätzliche Vertices zu generieren ist auch das, was den Geometry Shader besonders macht.
 Der Geometry Shader bekommt seinen Input entweder vom TES, oder, wenn die Tessellation Stage keine Verwendung findet, vom Vertex Shader und leitet seine Ausgabe an den Fragment Shader weiter.
 Um Bandbreite zwischen CPU und GPU zu sparen, kann ein Geometry Shader ein Dreiecksnetz mit wenigen Dreiecken erweitern und dieses so detaillierter gestalten.
-Ähnlich wie bei der Tessellation, die auf \textit{Patches} von Primitiven agiert, verarbeitet der Geometry Shader die Primitiven an sich.
+Ähnlich wie bei der Tessellation, die auf \textit{Patches} von Primitiven agiert, verarbeitet der Geometry Shader die Primitiven an sich \cite{Chang2014}.
 
 \subsubsection{Pixel Shader}
 \label{subsubsec:pixel_shader}
@@ -156,33 +156,41 @@ Um der Szene mehr Realismus beizusteuern, kann im Fragment Shader auch ein Licht
 Beispiele dafür sind \textit{Flat shading}, \textit{Gouraud shading} und \textit{Phong shading}.
 Für die Lichtberechnung werden die Oberflächen-Normalen benötigt.
 Diese sind entweder in einem Dreiecksnetz gegeben, oder müssen noch berechnet werden.
-Ausgabe des Pixel Shaders ist wiederum ein Fragment.
+Ausgabe des Pixel Shaders ist ein Fragment.
 
 \subsection{Compute Shader}
 \label{subsec:compute_shader}
-Der Compute Shader gehört nicht zur traditionellen Grafikpipeline, kann darin aber seinen Nutzen finden.
-Sie dienen dazu, jede Mögliche Information die gewünscht ist auf der GPU zu berechnen.
+Der Compute Shader gehört nicht zur traditionellen Grafikpipeline, kann aber mit dieser genutzt werden.
+Ein Compute Shader dient dazu, alle gewünschten Informationen ohne Einschränkungen auf der GPU zu berechnen.
 Anders als bei den Shader Stages der traditionellen Grafikpipeline (Kap.~\ref{fig:traditional_pipeline}), erwartet der Compute Shader keine definierten Input/Output Daten, wie beispielsweise der Vertex Shader, der als Input und Output einen Vertex erwartet.
 Der Compute Shader kann also willkürliche Daten verarbeiten und dabei noch die Parallelisierung der GPU nutzen \cite{Compute24}. \newline
 
-Wie schon gesagt erhält der Compute Shader keine Input Variablen wie beispielsweise der Vertex Shader.
+Dementsprechend erwartet der Compute Shader keine spezifischen Daten, wie der Vertex Shader Vertex Attribute erwartet.
 Im Gegensatz zu diesem werden benötigte Daten mittels Buffer und \glqq Shader Ressource Views\grqq\ auf die GPU geladen (in D3D12).
 Aber ganz ohne Inputs kommt der Compute Shader nicht aus.
 Vor Aufruf des Compute Shaders muss bestimmt werden, mit wie vielen Threads dieser arbeiten soll.
-Der Aufruf der Dispatch Methode mittel Grafik API führt dazu, das der aktuell aktive Compute Shader aufgerufen wird.
+Der Aufruf der Dispatch Methode mittel Grafik API führt dazu, dass der aktuell aktive/gebundene Compute Shader aufgerufen wird.
 Die Dispatch Methode nimmt die Anzahl an Threads in drei Dimensionen als Argument.
 
 Dafür gelten jedoch Hardware Limitierungen.
+Für die Anzahl der Threadgroups muss gelten
+\begin{gather*}
+	\text{ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ} < 65535
+\end{gather*}
+Im Compute Shader müssen die Anzahl an Threads pro Threadgroup bestimmt werden.
 Für die Anzahl der Threads muss gelten
 \begin{gather*}
-	numThreadsX, numThreads, numThreadsZ \leq 128 \\
-	numThreadsX * numThreadsY * numThreadsZ = 1024
+	\text{numThreadsX, numThreads, numThreadsZ} \leq 128 \\
+	\text{numThreadsX * numThreadsY * numThreadsZ} = 1024
 \end{gather*}
 (Für Compute Shader Version 5\_0)
 
-Um das SIMD Konzept des Compute Shaders zu verstehen sind zwei Variablen elementar wichtig.
+Um das SIMD Konzept und den Kontrollfluss des Compute Shaders zu verstehen, sind zwei Variablen elementar wichtig.
 SVGroupThreadID und SVGroupID.
-TODO
+Die GroupID koordiniert die von der Dispatch Methode definierte Anzahl an Threadgroups.
+
+Die GroupID spannt eine bestimmte Anzahl an Threads auf, die vorher im Compute Shader festgelegt wurde.
+Jedem dieser Threads einer Threadgroup wird eine GroupThreadID zugeteilt.
 
 \subsection{Quantisierung von Gleitkommazahlen}
 \label{subsec:quantisierung}
@@ -209,12 +217,12 @@ Tiefpassfilter
 Das Unterkapitel beschäftigt sich mit den Begriffen der Datenkompression, die im Zuge dieser Arbeit Verwendung finden.
 
 \subsubsection*{Informationsgehalt}
-Der Informationsgehalt eines Ereignisses beschreibt, wie viele Informationen beim auftreten des benannten Ereignisses gewonnen werden können.
+Der Informationsgehalt eines Ereignisses beschreibt, wie viele Informationen beim Auftreten des benannten Ereignisses gewonnen werden können.
 \begin{equation*}
 I(s_i) = \log_2 \frac{1}{p_i}
 \end{equation*}
-Es sind mehr Informationen zu gewinnen, wenn das auftretende Ereignis eher Unwahrscheinlich ist.
-Was bedeutet, das der Informationsgehalt eines Ereignisses an Größe gewinnt, je überraschender das Ereignis auftritt.
+Es sind mehr Informationen zu gewinnen, wenn das auftretende Ereignis eher unwahrscheinlich ist.
+Was bedeutet, dass der Informationsgehalt eines Ereignisses an Größe gewinnt, je überraschender das Ereignis auftritt.
 Eine Information wird in der Informationstheorie als \textit{beseitigte Unsicherheit} bezeichnet.
 
 \subsubsection*{Entropie}
@@ -228,7 +236,7 @@ Maximal wird der Wert, wenn eine Gleichverteilung vorherrscht, also wenn die Wah
 Eine geringe Entropie kann erzielt werden, wenn die Auftrittswahrscheinlichkeiten stark voneinander variieren, wie es bei einer Glockenkurve der Fall ist. 
 
 \subsubsection*{Entscheidungsgehalt}
-Um das Entscheidungsgehalt einer Quelle zu Berechnen, wird der Logarithmus Duales auf die Anzahl der Symbole angewendet.
+Um das Entscheidungsgehalt einer Quelle zu berechnen, wird der Logarithmus Duales auf die Anzahl der Symbole angewendet.
 \begin{equation*}
 H_0 = \log_2 (K)
 \end{equation*}

@@ -30,7 +30,7 @@ So können wie beim Compute Shader auch arbeiten verrichtet werden, die nicht di
 In dieser Arbeit wird der Mesh Shader zum dekomprimieren des Dreiecksnetzes genutzt.
 Zum Rendern müssen jedoch wieder Fragments ausgegeben werden, die in den unveränderte Rasterization und Pixel Shader Stages verarbeitet werden. \cite{Kubisch2018}
 
-\subsubsection{Mesh Shader}
+\subsubsection*{Mesh Shader}
 Da die optionale Task Shader Stage in dieser Arbeit nicht verwendet wird, betrachten wir die Pipeline aus dem Szenario, das die Anzahl an Workgroups des DirectX Dispatch direkt dem Mesh Shader gegeben wird.
 Die Nummer an Workgroups beschreibt, wie viele Kerne verwendet werden sollen.
 Bei Mesh Shadern bietet es sich an, die Anzahl der Workgroups auf die Anzahl an Meshlets zu setzen.

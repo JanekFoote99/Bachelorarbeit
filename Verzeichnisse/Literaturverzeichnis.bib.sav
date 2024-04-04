@@ -316,12 +316,40 @@ url="https://doi.org/10.1007/978-3-322-94769-7_2"
   url   = {https://www.thedisneyclassics.com/blog/animation-styles},
 }
 
-@Book{DAT,
+@Book{Bennett2020,
   author = {Christopher L. Bennett},
   title  = {Digital Audio Theory: A Practical Guide},
   year   = {2020},
   isbn   = {2020031086; 9782020031080; 9780367276553; 0367276550; 9780367276539; 0367276534; 9780429297144; 0429297149},
   url    = {libgen.li/file.php?md5=3498477d0a02ff6d40297c0cf73bac79},
+}
+
+@Article{Flynn1996,
+  author    = {Flynn, Michael J and Rudd, Kevin W},
+  journal   = {ACM computing surveys (CSUR)},
+  title     = {Parallel architectures},
+  year      = {1996},
+  number    = {1},
+  pages     = {67--70},
+  volume    = {28},
+  publisher = {ACM New York, NY, USA},
+}
+
+@Article{Maughan2001,
+  author  = {Maughan, Chris and Wloka, Matthias},
+  journal = {NVIDIA Technical Brief},
+  title   = {Vertex shader introduction},
+  year    = {2001},
+}
+
+@Article{chang2014geometry,
+  author    = {Chang, Hsu-Huai and Lai, Yu-Chi and Yao, Chin-Yuan and Hua, Kai-Lung and Niu, Yuzhen and Liu, Feng},
+  journal   = {The Visual Computer},
+  title     = {Geometry-shader-based real-time voxelization and applications},
+  year      = {2014},
+  pages     = {327--340},
+  volume    = {30},
+  publisher = {Springer},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
