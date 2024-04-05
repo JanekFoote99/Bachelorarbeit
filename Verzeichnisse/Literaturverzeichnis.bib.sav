@@ -342,7 +342,7 @@ url="https://doi.org/10.1007/978-3-322-94769-7_2"
   year    = {2001},
 }
 
-@Article{chang2014geometry,
+@Article{Chang2014,
   author    = {Chang, Hsu-Huai and Lai, Yu-Chi and Yao, Chin-Yuan and Hua, Kai-Lung and Niu, Yuzhen and Liu, Feng},
   journal   = {The Visual Computer},
   title     = {Geometry-shader-based real-time voxelization and applications},
