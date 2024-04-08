@@ -201,7 +201,7 @@ Die Vertex Attribute bestehen dabei aus einer Position und einer Normalen, die w
 Da Gleitkommazahlen im Gegensatz zu ganzen Zahlen aus 3 Komponenten bestehen, muss zunächst geklärt werden, wie diese quantisiert werden können. \newline
 
 Um eine Gleitkommazahl zu konstruieren, benötigt man ein Bit für das Vorzeichen (\textit{Sign Bit}), eine Anzahl an Bits für den Exponenten und Mantisse.
-In der Programmiersprache \textit{C++} sind für einer 32 Bit Gleitkommazahl 8 Bit für den Exponenten vorgesehen, während die Mantisse aus 23 Bit besteht.
+In der Programmiersprache \textit{C++} sind für einer 32 Bit Gleitkommazahl 8 Bit für den Exponenten vorgesehen, während die Mantisse aus 23 Bit besteht (Abb.~\ref{fig:number_representation}).
 Der Standard IEEE-754 legt diese Spezifikation für Gleitkommazahlen fest.
 Diese kann jedoch von Compiler zu Compiler abweichen \cite{Microsoft2023}.
 Die Mantisse stellt eine Zahl zwischen 1,0 und 2,0 dar.
@@ -210,7 +210,14 @@ Der Exponent einer Gleitkommazahl ist für die Skalierung der Mantisse zuständi
 Die Mantisse wird mit dem Exponenten multipliziert, um den absoluten Wert der Gleitkommazahl zu erhalten.
 Das Vorzeichenbit entscheidet anschließend, ob die Zahl positiv oder negativ behaftet ist \cite{Widrow_Kollár_2008}. \newline
 
-Tiefpassfilter
+\begin{figure}[htb]
+  \centering  
+  \includegraphics[scale=0.50]{Bilder/number_representation.png}
+  \caption[Repräsentation einer Zahl]{\textbf{Repräsentation einer Zahl} Die Abbildung zeigt die Zusammensetzung von Ganz- und Gleitkommazahlen. Die Abbildung stammt aus dem Foliensatz \url{https://media.nips.cc/Conferences/2015/tutorialslides/Dally-NIPS-Tutorial-2015.pdf}}
+  \label{fig:number_representation}
+\end{figure}
+
+TODO
 
 \subsection{Grundbegriffe der Datenkompression}
 \label{subsec:grundbegriffe_datenkompression}

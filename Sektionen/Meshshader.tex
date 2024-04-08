@@ -11,7 +11,7 @@ Mit der \textit{Mesh Shading Pipeline} wurde die Möglichkeit der Parallelisieru
 Anders als bei der herkömmlichen Grafikpipeline erhält der Mesh Shader seine Daten direkt vom Speicher. 
 Dadurch öffnen sich Türen für den Entwickler, da er komprimierte Daten direkt in den GPU Speicher laden kann, um die Daten dann effizienter auf dieser zu dekomprimieren.
 
-\subsection{Mesh Shading Pipeline}
+\subsection{Die Mesh Shading Pipeline}
 \label{subsec:meshshading_pipeline}
 Die Mesh Shading Pipeline berücksichtigt einige Shader Stages der traditionellen Grafikpipeline aus Kap.~\ref{subsec:traditionelle_renderingpipeline} nicht mehr.
 Stattdessen sind die Funktionalitäten der verworfenen Stages in den frei Programmierbaren Task- und Mesh Shadern vorhanden.
@@ -158,20 +158,29 @@ void main(
     out indices uint3 tris[128]
 )
 {
-  Meshlet m = Meshlets[meshletIndex];
+  	Meshlet m = Meshlets[meshletIndex];
 
-  SetMeshOutputCounts(m.VertCount, m.PrimCount);
-  
-  if (localIndex < m.PrimCount)
-  {
-    tris[localIndex] = GetPrimitive(m, localIndex);
-  }
-  
-  if (localIndex < m.VertCount)
-  {
-    uint vertexIndex = GetVertexIndex(m, localIndex);
-    verts[localIndex] = GetVertex(meshletIndex, vertexIndex);
-  }
+	SetMeshOutputCounts(m.VertCount, m.PrimCount);
+
+	if (localIndex < m.PrimCount)
+	{
+  		tris[localIndex] = GetPrimitive(m, localIndex);
+	}
+
+	if (drawQuantizedVertices)
+	{
+  		if (localIndex < m.VertCount)
+  		{
+    		verts[localIndex] = GetQuantizedVertex(meshletIndex, localIndex);
+  		}
+	}
+	else
+	{
+  		if (localIndex < m.VertCount)
+  		{
+    		verts[localIndex] = GetVertex(meshletIndex, localIndex);
+  		}
+	}
 }
 \end{lstlisting}
 
@@ -197,6 +206,6 @@ In der Methode GetVertexIndex musste zunächst ein \textit{Unique Vertex Index} 
 Mithilfe des lokalen Vertex-Buffers ist dieser Schritt nicht mehr nötig.
 Der korrekte Vertex Index kann nun lediglich mit dem Vertex Offset des Meshlets und der GroupThreadID berechnet werden.
 Mit diesem Index ist ein direkter Zugriff auf die Vertex-Ressourcen möglich.
-Dadurch befinden sich zwar duplizierte Vertices im Vertex-Buffer, dafür kann sich aber der ganze Buffer mit den \textit{Unique Vertex Indices} gespart werden.
+Dadurch befinden sich zwar duplizierte Vertices im Vertex-Buffer, der Buffer mit den \textit{Unique Vertex Indices} wird jedoch nicht mehr benötigt.
 Darauf folgt noch, dass der zusätzliche Elementzugriff des wegfallenden Buffers nicht mehr notwendig ist, um zu den jeweiligen Meshlet Vertex zu gelangen.
-So besteht jeder einzelne, große Buffer mit allen Elementen sozusagen aus zusammengesetzten, kleinen Meshlet Buffern, die alle benötigten Elemente des jeweiligen Meshlets enthalten.
+So besteht jeder einzelne, große Buffer mit allen Elementen sozusagen aus zusammengesetzten, kleinen Meshlet Buffern.

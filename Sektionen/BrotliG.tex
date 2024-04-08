@@ -24,7 +24,7 @@ Der LZ77 (\textit{Lempel-Ziv77}) Algorithmus gehört zu der Gruppe der Phrasenko
 Der Algorithmus komprimiert sequentielle Zeichenketten.
 Dabei kann dieser auf jeder Art von Daten, egal wie der Inhalt und die Größe aussieht, angewendet werden.
 Ob es sich lohnt, diesen anzuwenden, ist jedoch von den Daten abhängig.
-Das Ziel des LZ77 Algorithmus ist, redundante Informationen zusammenzufassen, indem die Position und Lauflänge von bereits bekannten Symbolen ausgenutzt werden, um Daten effizient zu komprimieren. \newline
+Das Ziel des LZ77 Algorithmus ist, redundante Informationen zusammenzufassen, indem die Position und Lauflänge von bereits bekannten Symbolen ausgenutzt werden, um Daten effizient zu komprimieren \cite{Strutz2009}. \newline
 
 Bevor der Algorithmus beschrieben wird, werden die benötigten Elemente definiert:
 
@@ -113,9 +113,10 @@ Die Dekodierung ist nach diesem Schritt abgeschlossen.
 \caption{Dekodierung mit dem LZ77-Algorithmus}
 \end{table}
 
-Wie zu sehen ist, ist der LZ77 Algorithmus sowohl leicht verständlich als auch effektiv, wodurch er seinen Nutzen in vielen Anwendungen findet.
-Seine Weiterentwicklungen nennen sich LZ78 und LZW, die zwar dem LZ77 Algorithmus technisch überlegen sind, aufgrund von Patenten jedoch nicht so eine große Rolle spielen wie die erste Iteration von Lempel und Ziv.
-In Kombination mit anderen Techniken wie der Huffman Codierung bildet der LZ77-Algorithmus jedoch die Grundlage vieler leistungsstarker Kompressionsstandards, die heute in vielen Applikationen zu finden sind. \newline
+Der LZ77-Algorithmus ist leicht verständlich und effektiv, was ihn für viele Anwendungen nützlich macht.
+Seine Weiterentwicklungen heißen LZ78 und LZW, die dem LZ77-Algorithmus in einigen Bereichen technisch überlegen sind, aber auch Probleme mit sich bringen. \cite{Choudhary2015}.
+Hinzu kommt, dass die Weiterentwicklungen aufgrund von Patenten nicht die gleiche Rolle spielen wie die erste Iteration von Lempel und Ziv.
+Kombiniert mit anderen Verfahren, wie der Huffman-Kodierung, bildet der LZ77-Algorithmus jedoch die Grundlage für viele leistungsfähige Kompressionsstandards, die heute in vielen Anwendungen zu finden sind. \newline
 
 \subsection{Huffman-Kodierung}
 \label{subsec:huffman}
@@ -130,7 +131,6 @@ Die Codewörter im Morse Code haben sich nämlich ebenfalls die Eigenschaft der 
 Die im englischen Alphabet meist verwendeten Codewörter \glqq E\grqq\ und \glqq T\grqq\ werden beide mit jeweils einem Signal dargestellt.
 Das \glqq E\grqq\ wird mit einem kurzen, während das \glqq T\grqq\ vom langen Signal dargestellt wird.
 Mithilfe dieser Eigenschaft verbrauchen Symbole, die häufig auftreten, weniger Platz im Bitstrom \cite{Moffat2019}.
-Histogramm ....
 
 \subsubsection{Konstruktion einer Huffman-Kodierung}
 \label{subsubsec:konstruktion_huffman}
@@ -148,7 +148,7 @@ Die Codewörter für jedes Symbol sind abzulesen, indem die Beschriftungen der Z
 Um den Vorteil dieser Eigenschaft zu veranschaulichen, kann ein Vergleich mit dem \textit{fixed length Code (FLC)} hilfreich sein.
 Anders als \textit{Variable Length Code (VLC)} Verfahren wie die Huffman-Kodierung, wird jedem Symbol eines FLCs ein Codewort fester Länge zugewiesen.
 Die Auftrittswahrscheinlichkeit spielt bei der Erstellung von Codewörtern also keine Rolle.
-Um einen Vergleich zu ziehen kann die mittlere Codewortlänge des Alphabets, mit folgenden Symbolen betrachtet werden.
+Um einen Vergleich zu ziehen kann die mittlere Codewortlänge des Alphabets, mit folgenden Symbolen betrachtet werden \cite{Moffat2019}.
 
 \begin{table}[h]
 \centering
@@ -192,7 +192,7 @@ Die Formel für das Kompressionsverhältnis auf Kap.~\ref{subsec:grundbegriffe_d
 C_R = \frac{\text{Eingabegröße}}{\text{Ausgabegröße}}
 \end{equation*}
 
-Da sich bei einer Huffman-Kodierung lediglich die Codewortlängen ändern, kann der FLC als Eingabe- und der Huffman Code als Ausgabegröße in der Formel verwendet werden.
+Da sich bei einer Huffman-Kodierung lediglich die Codewortlängen ändern, kann der FLC als Eingabe- und der Huffman Code als Ausgabegröße in der Formel verwendet werden \cite{Strutz2009}.
 So ergibt sich ein Kompressionsverhältnis von:
 \begin{equation*}
 C_R = \frac{\lceil \log_2(N) \rceil}{\sum_{i=1}^{n} p_i \cdot l_i}
@@ -203,7 +203,7 @@ C_R = \frac{2,0 \ \text{Bits/Symbol}}{1,6 \ \text{Bits/Symbol}} = 1,25
 \end{equation*}
 
 Die Effektivität der Huffman-Kodierung hängt stark von der Verteilung der Symbole in der Datenquelle ab. 
-Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die Codewörter für die einzelnen Symbole ähnliche Längen haben. 
+Wenn der konstruierte Binärbaum stark balanciert ist, bedeutet dies, dass die Codewörter für die einzelnen Symbole ähnliche Längen haben.
 In solchen Fällen ist die Huffman-Kodierung weniger effektiv, da sie weniger Redundanz in den Daten ausnutzen kann.
 
 Redundanz beschreibt den unnötigen Aufwand zu Repräsentation einer Information.
