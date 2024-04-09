@@ -175,13 +175,13 @@ Die Dispatch Methode nimmt die Anzahl an Threads in drei Dimensionen als Argumen
 Dafür gelten jedoch Hardware Limitierungen.
 Für die Anzahl der Threadgroups muss gelten
 \begin{gather*}
-	\text{ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ} < 65535
+	\mathrm{ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ} < 65535
 \end{gather*}
 Im Compute Shader müssen die Anzahl an Threads pro Threadgroup bestimmt werden.
 Für die Anzahl der Threads muss gelten
 \begin{gather*}
-	\text{numThreadsX, numThreads, numThreadsZ} \leq 128 \\
-	\text{numThreadsX * numThreadsY * numThreadsZ} = 1024
+	\mathrm{numThreadsX, numThreads, numThreadsZ} \leq 128 \\
+	\mathrm{numThreadsX} \cdot \mathrm{numThreadsY} \cdot \mathrm{numThreadsZ} = 1024
 \end{gather*}
 (Für Compute Shader Version 5\_0)
 
@@ -217,7 +217,35 @@ Das Vorzeichenbit entscheidet anschließend, ob die Zahl positiv oder negativ be
   \label{fig:number_representation}
 \end{figure}
 
-TODO
+Das Ziel der Quantisierung ist, eine Gleitkommazahl so zu transformieren, das ihr Wert den originalen Wert so gut es geht widerspiegelt, während der benötigte Speicherplatz verringert wird \cite{Kapoulkine2010}.
+Wie in der Abbildung~\ref{fig:number_representation} zu sehen ist, wird bei der Repräsentation des \textit{half-precision floating-point formats} der Exponent mit 5 Bit und die Mantisse mit 10 Bit dargestellt. \newline
+
+Der Algorithmus zur Quantisierung von 32 Bit zu 16 Bit Gleitkommazahlen stammt aus dem Meshoptimizer von Zeux \cite{Zeux}.
+Dazu legt er eine Union an, damit er auf die Eingabe als Ganz- und Gleitkommazahl zugreifen kann.
+Diese ermöglicht es, auf die Ganzzahl Bitoperationen auszuführen, die durch das Union auch auf der Gleitkommazahl übernommen werden.
+Das Vorzeichen , der Exponent und der Bias des Exponenten der Zahl werden in den Variablen \textit{s} und \textit{em} und \textit{h} gespeichert. 
+Um Ausnahmefälle zu behandeln, ist eine Überprüfung nach einem Over- oder Underflow notwendig.
+Zuletzt wird der Wert auf \textit{NaN (Not a Number)} gesetzt, falls der Exponent einen gewissen Grenzwert überschreitet. \newpage
+\begin{lstlisting}[language = C++, caption = Quantisierung von Float zu Half, label=lst:floatToHalf]
+unsigned short meshopt_quantizeHalf(float v)
+{
+	union { float f; unsigned int ui; } u = {v};
+	unsigned int ui = u.ui;
+
+	int s = (ui >> 16) & 0x8000;
+	int em = ui & 0x7fffffff;
+
+	int h = (em - (112 << 23) + (1 << 12)) >> 13;
+
+	h = (em < (113 << 23)) ? 0 : h;
+
+	h = (em >= (143 << 23)) ? 0x7c00 : h;
+
+	h = (em > (255 << 23)) ? 0x7e00 : h;
+
+	return (unsigned short)(s | h);
+}
+\end{lstlisting}
 
 \subsection{Grundbegriffe der Datenkompression}
 \label{subsec:grundbegriffe_datenkompression}
@@ -234,26 +262,26 @@ Eine Information wird in der Informationstheorie als \textit{beseitigte Unsicher
 
 \subsubsection*{Entropie}
 Die Entropie einer Datenquelle ist der mittlere Informationsgehalt.
-Sie berechnet sich aus der Summe der Informationsgehalte der Symbole, multipliziert mit der Auftrittswahrscheinlichkeit des Symbols.
+Sie berechnet sich aus der Summe der Informationsgehalte der Symbole, multipliziert mit der Auftrittswahrscheinlichkeit des Symbols:
 \begin{equation*}
-H = \sum_{i = 1}^{K} p_i * log_2 \frac{1}{p_i}
+H = \sum_{i = 1}^{K} p_i \cdot log_2 \frac{1}{p_i}.
 \end{equation*}
 Der Wert der Entropie profitiert von einer Ungleichverteilung der Auftrittswahrscheinlichkeiten.
 Maximal wird der Wert, wenn eine Gleichverteilung vorherrscht, also wenn die Wahrscheinlichkeiten der Symbole gleich groß sind.
 Eine geringe Entropie kann erzielt werden, wenn die Auftrittswahrscheinlichkeiten stark voneinander variieren, wie es bei einer Glockenkurve der Fall ist. 
 
 \subsubsection*{Entscheidungsgehalt}
-Um das Entscheidungsgehalt einer Quelle zu berechnen, wird der Logarithmus Duales auf die Anzahl der Symbole angewendet.
+Um den Entscheidungsgehalt einer Quelle zu berechnen, wird der Logarithmus Duales auf die Anzahl der Symbole angewendet:
 \begin{equation*}
-H_0 = \log_2 (K)
+H_0 = \log_2 (K).
 \end{equation*}
 Diese Zahl entspricht der Entropie bei einer Gleichverteilung der Symbole.
 
 \subsubsection*{Kompressionsverhältnis}
 Aus der Relation der ursprünglichen Daten und den kodierten Daten ergibt sich das Kompressionsverhältnis.
-Diese gibt ein gutes Bewertungsmaß, wie gut ein Kompressionsalgorithmus für eine gegebene Quelle funktioniert.
+Diese gibt ein gutes Bewertungsmaß, wie gut ein Kompressionsalgorithmus für eine gegebene Quelle funktioniert:
 \begin{equation*}
-C_R = \frac{\text{ursprüngliche Datenmenge}}{\text{kodierte Datenmenge}}
+C_R = \frac{\text{ursprüngliche Datenmenge}}{\text{kodierte Datenmenge}}.
 \end{equation*}
 
 \subsubsection*{Redundanz}
@@ -261,15 +289,14 @@ Als Redundanz bezeichnet man zusätzlichen Aufwand, der für die Repräsentation
 Um die von Brotli-G verwendeten Algorithmen zu verstehen, muss die Quell- und Codierungsredundanz definiert werden.
 
 Die \textit{Quellredundanz} beschreibt die zusätzlichen Informationen einer Quelle (einer Sammlung an Symbolen), die nicht benötigt werden.
-Die Quellredundanz ist abhängig von dem Entscheidungsgehalt $\mathit{H_0}$ des Alphabets und der Quellentropie $\mathit{H(X)}$.
+Die Quellredundanz ist abhängig von dem Entscheidungsgehalt $\mathit{H_0}$ des Alphabets und der Quellentropie $\mathit{H(X)}$:
 \begin{equation*}
-R_0 = H_0 - H(x)
+R_0 = H_0 - H(x).
 \end{equation*}
 
 Unter \textit{Codierungsredundanz} ist die Redundanz zu verstehen, die in den Codewörtern vorherrscht.
-Die Codierungsredundanz ist die Differenz zwischen der durchschnittlichen Datenmenge (beispielsweise die mittlere Codewortlänge) und der Entropie.
+Die Codierungsredundanz ist die Differenz zwischen der durchschnittlichen Datenmenge (beispielsweise die mittlere Codewortlänge) und der Entropie \cite{Strutz2009}.
 \begin{equation*}
 \Delta R(X) = R - H(x)
 \end{equation*}
 
-\cite{Strutz2009}

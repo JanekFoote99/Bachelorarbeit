@@ -1,6 +1,6 @@
 \section{Methodik}
 \label{sec:methodik}
-Die vorliegende Bachelorarbeit beschäftigt sich mit der Dekodierung verschiedener Dreiecksnetze mittels des Kodierungsstandards Brotli-G.
+Die vorliegende Bachelorarbeit beschäftigt sich mit der Dekodierung von Dreiecksnetzen mittels des Kodierungsstandards Brotli-G.
 Diese Sektion dient dazu, einen detaillierten Einblick auf die Durchführung und Analyse des Experiments zu geben.
 Das Experiment zielt darauf ab, komprimierte Dreiecksnetze auf der GPU zu dekomprimieren.
 Insbesondere sollen das Kompressionsverhältnis, die Dekompressionsgeschwindigkeit und die visuelle Qualität quantitativ ausgewertet werden. \newline
@@ -9,12 +9,12 @@ In diesem Abschnitt folgt eine kleine Beschreibung, wie die Kompressionspipeline
 In den folgenden Kapiteln werden die einzelnen Teilschritte genauer erläutert. \newline
 Zu Beginn muss der Datensatz mittels Brotli-G kodiert werden.
 Der Einfachheit halber wird in diesem Abschnitt von einem einzigen Dreiecksnetz gesprochen.
-Der Meshoptimizer von Zeux \cite{Zeux} ist dafür verantwortlich, aus den Positionen und Indizes die Daten für die Meshlets zu generieren.
+Der \textit{Meshoptimizer} von Zeux \cite{Zeux} ist dafür verantwortlich, aus den Positionen und Indizes die Daten für die Meshlets zu generieren.
 Dazu wurde ein Binärformat entworfen, welches die relevanten Daten zum Darstellen des gesamten Dreiecksnetzes speichert.
 Das Binärformat besteht dementsprechend aus dem Meshlet Descriptor, Vertex Ressourcen (Positionen und Normalen) und den Indizes zur Generierung von Primitiven. \newline
 Dieses Binärformat wird als Gesamtes komprimiert.
 Anschließend werden die GPU-Ressourcen für die Eingabe (komprimiertes Dreiecksnetz) und Ausgabe (dekomprimiertes Dreiecksnetz) angelegt. \newline
-Für die Ausgabe wird eine \glqq Unordered Access View (UAV)\grqq\ verwendet.
+Für die Ausgabe wird eine \textit{Unordered Access View (UAV)} verwendet.
 Wie der Name schon vermuten lässt, bietet diese eine flexiblere Möglichkeit, gleichzeitig an verschiedenen Orten zu lesen und zu schreiben.
 Besonders von Vorteil ist dieser Ressourcentyp für die parallele Verarbeitung.
 So können einzelne Threads von der Ressource lesen/schreiben, ohne warten zu müssen, bis ein anderer Thread die Ressource wieder freigibt \cite{Microsoft2021}. \newline

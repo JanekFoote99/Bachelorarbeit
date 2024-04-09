@@ -60,7 +60,8 @@ Dazu werden Vertex Positionen und Indizes benötigt.
 Die Anzahl der Vertices und Primitiven muss im Vorfeld festgelegt werden.
 Die maximale Größe der Meshlets ist abhängig von der verwendeten GPU.
 So wird im NVIDIA Blogpost \textit{Introduction to Turing Mesh Shaders} eine maximale Anzahl an Vertices von 64, und Primitiven von 126 empfohlen.
-Es werden 126 statt 128 Primitiven empfohlen, da 4 Byte für die Anzahl der Primitiven verwendet werden, die im selben Block Speicher enthalten sein sollen, bzw. keinen weiteren Block beanspruchen sollen \cite{Kubisch2018}. \newline
+Die 126 ist bewusst keine Zweierpotenz, da 4 Byte für die Anzahl der Primitiven des Meshlets verwendet werden.
+Zur Vermeidung der Anforderung eines zusätzlichen Speicherblocks werden diese 4 Byte Speicher freigelassen \cite{Kubisch2018}. \newline
 
 Arseny Kapoulkine hat verschiedene Meshletgrößen miteinander verglichen.
 Er ist zu dem Schluss gekommen, dass 64 Vertices und 84 Primitives am effizientesten sind, insbesondere dann, wenn im Task Shader Culling auf die einzelnen Meshlets angewendet wird.
@@ -106,9 +107,9 @@ Die hier jedoch eine Indexierung auf Meshlet Ebene vorliegt, müssen diese Werte
 Die Werte reichen nun anstelle von 0 - \textit{VertexCount}, von 0 - \textit{MaxPrimitiveCount} - 1.
 Das bedeutet, wenn Meshlets mit einer Vertex Anzahl von 64 und Primitiven Anzahl von 128 generiert werden, befinden sich in \textit{meshlet\_indices} lediglich Werte zwischen 0 - 127.
 Um den aktuellen Index eines Meshlets zu erhalten, muss ähnlich wie bei den Vertices der lokale Index berechnet werden.
-Dazu wird die Formel
+Dazu wird die Formel:
 \begin{equation*}
-localIndex = PrimitiveOffset + localIndex * indicesPerTriangle
+\mathrm{localIndex} = \mathrm{PrimitiveOffset} + (\mathrm{localIndex} \cdot \mathrm{indicesPerTriangle})
 \end{equation*}
 verwendet.
 Da die Ausgabe einen 3-dimensionalen Vektor für die Primitiven erwartet, ist die Variable indicesPerTriangle = 3.
@@ -147,7 +148,7 @@ Die aktuellen Gruppe wird in Threads aufgeteilt, die sich jeweils um einen Verte
 Dazu wird überprüft, ob sich die GroupThreadID noch innerhalb der Grenzen des aktuellen Meshlets befindet.
 Sollte dies der Fall sein, liest der Mesh Shader mithilfe des Meshlet Descriptors und der GroupThreadID Vertex und Primitive aus.
 
-\newpage \begin{lstlisting}[language = C++, caption = Standard Mesh Shader main-Methode, label=lst:shadercode]
+\newpage \begin{lstlisting}[language = C++, caption = Main Methode des Mesh Shaders, label=lst:shadercode]
 [RootSignature(ROOT_SIG)]
 [NumThreads(128, 1, 1)]
 [OutputTopology("triangle")]
