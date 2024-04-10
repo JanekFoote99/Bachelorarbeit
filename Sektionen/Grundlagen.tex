@@ -6,12 +6,12 @@ Damit der Weg von Komprimierung zu Darstellung verständlich ist, müssen einige
 
 In diesem Grundlagenkapitel werden die von Brotli-G benutzten Algorithmen erläutert.
 Zusätzlich wird ein Ausblick auf die Grafikpipeline gegeben und die Stellen betrachtet, bei denen weitere Verbesserungen vorgenommen werden können.
-Diese zeigt alle Transformationen, die die Daten eines Dreiecksnetzes von dem erreichen des GPU-Buffer bis zum Bildschirm durchlaufen.
+Diese zeigt alle Transformationen, die die Daten eines Dreiecksnetzes von dem Erreichen des GPU-Buffer bis zum Bildschirm durchlaufen.
 
 \subsection{Brotli Kompressionsstandard}
 \label{subsec:brotli}
 Brotli-G ist eine Weiterentwicklung des Brotli Kompressionsstand, der von AMD im Jahre 2022 entwickelt und veröffentlicht wurde.
-Die AMD Spezifikation bietet parallele Datenverarbeiten nach dem SIMD Prinzip (Kap.~\ref{fig:simd_pattern}) auf Parallelrechnern, wie GPUs und Multithreaded CPUs.
+Die AMD Spezifikation bietet parallele Datenverarbeiten nach dem SIMD Prinzip auf Parallelrechnern, wie GPUs und Multithreaded CPUs.
 Zum Verständnis des von AMD veröffentlichten Kompressionsmodells ist zunächst ein Blick auf das Original erforderlich. \newline
 
 Brotli ist ein von Google Research entwickelter Kompressionsstandard, der 2013 veröffentlicht wurde.
@@ -21,8 +21,8 @@ So sollte Brotli auch in der Lage sein, Inhalte, die mit Brotli-G komprimiert wu
 Zu beachten ist, dass dies nur in dieser Richtung funktioniert, und somit Brotli das Brotli-G Format nicht dekodieren kann  \cite{BrotliG2022}.
 
 Brotli verwendet eine Kombination vieler Kompressionsalgorithmen, um Inhalte effizient zu komprimieren. 
-Brotli's Kern besteht aus einem LZ77 Algorithmus, der in unterschiedlichen Ausführung auch in anderen Kompressionsstandard verwendet wird.
-Der LZ77 Algorithmus wird zusätzlich mittels Huffman Codierung optimiert.
+Brotli's Kern besteht aus einem LZ77 Algorithmus (Kap.~\ref{subsec:lz77}), der in unterschiedlichen Ausführung auch in anderen Kompressionsstandard verwendet wird.
+Der LZ77 Algorithmus wird zusätzlich mittels Huffman Codierung (Kap.~\ref{subsec:huffman}) optimiert.
 
 \subsection{Parallele Datenverarbeitung}
 \label{subsec:flynn}
@@ -34,7 +34,7 @@ Die Instruktions- und Datenströme:
 \item[\textit{SD}] (\textbf{S}ingle \textbf{D}ata) 
 \item[\textit{MD}] (\textbf{M}ultiple \textbf{D}ata) 
 \end{enumerate}
-können kombiniert werden. \newline
+können kombiniert werden \cite{Flynn1996}. \newline
 
 Dadurch ergeben sich die vier Rechnerarchitekturen \textit{SISD}, \textit{SIMD}, \textit{MISD}, \textit{MIMD}.
 \subsubsection*{SISD (Single Instruction, Single Data)}
@@ -89,7 +89,7 @@ Einige dieser Stages sind optional.
 Im GPU Memory angekommen, liest die \textit{Vertex Attribute Fetch} Stage die Vertex Daten aus und sendet diese an den Vertex Shader.
 Die Vertex Daten werden dort in die benötigten Koordinatensysteme transformiert und der optionalen Tessellation Stage weitergegeben, falls diese verwendet wird.
 Die Tessellation Stage ist dazu da, Patches von Primitiven in kleinere Primitiven zu unterteilen.
-Der optionale Geometry Shader kann dazu verwendet werden, weitere Vertices zu generieren.
+Der optionale Geometry Shader kann dazu verwendet werden, weitere Primitiven zu generieren.
 Im Rasterisierer angekommen, werden Primitiven verarbeitet und daraus Fragmente berechnet, denen der Fragment Shader zum Abschluss ihre Farbe gibt. \newline
 Im Folgenden werden die einzelnen Stages nochmal genauer erläutert.
 
@@ -114,19 +114,20 @@ Die Tessellation Stage besteht aus drei Schritten.
 Darunter ist mit dem \textit{Tessellation Control Shader} (TCS) ein optional programmierbarer Schritt, eine fixed-function Stage mit der \textit{Primitive Generation} und einen programmierbaren \textit{Tessellation Evaluation Shader} (TES).
 
 \subsubsection*{Tessellation Control Shader (TCS)}
-Der \textit{Tessellation Control Shader (TCS)} (der wiederum optional ist), ist ein geeigneter Schritt, um das \textit{LOD} (Level of Detail) zu berechnen und unter gewissen Voraussetzungen vorab einige Patches zu cullen. 
+Der optionale \textit{Tessellation Control Shader (TCS)} ist ein geeigneter Schritt, um das \textit{LOD} (Level of Detail) zu berechnen und unter gewissen Voraussetzungen vorab einige Patches zu cullen. 
 Ein Patch beschreibt eine Anzahl an Primitiven.
 Aus der Subdivision dieses Patches werden weitere Vertices berechnet, die zur Verarbeitung zum nächsten Schritt der Pipeline geschickt werden.
 Im TCS werden der Tessellationsgrad, der Abstand zwischen den Unterteilungen und die gewünschte Topologie festgelegt.
 Genauer gesagt wird hier gesetzt, wie oft die Primitiven unterteilt werden und welche Topologie diese am Ende haben sollen (triangle, quad, isolines).
 
 \subsubsection*{Tessellation Topology Generation (TPG)}
-Mit der fixed-function stage des Tessellation Schritts werden die Primitiven mittels den im TCS bestimmten Parametern unterteilt.
+Mit der fixed-function Stage des Tessellation Schritts werden die Primitiven mittels den im TCS bestimmten Parametern unterteilt.
 Die Koordinaten werden anschließend für den Tessellation Evaluation Shader berechnet.
 Diese unterteilt die Patches abhängig von den Berechnungen der TCS.
 
 \subsubsection*{Tessellation Evaluation Shader (TES)}
-Der \textit{Tessellation Evaluation Shader} hat den einfachsten Job und realisiert lediglich die Arbeit, die von den zwei vorherigen Stages verrichtet wurde.
+Das Vorhandensein des \textit{Tessellation Evaluation Shaders} bestimmt, ob die Tessellation Stage ausgeführt wird.
+Dies wird für jeden einzigartigen Vertex durchgeführt, der in der Tessellation Stage erzeugt wird.
 Die berechneten Koordinaten des TPG werden in dieser Shader Stage interpoliert, um die neuen Vertices zu generieren.
 Abschließend werden die aus der Subdivision berechneten Vertices ausgegeben. 
 Wenn der optionale TCS nicht genutzt wird, werden wendet der TPG Standard Parameter für die Berechnung an \cite{cozzi2012opengl}\cite{Carvalho2022}.
@@ -135,7 +136,7 @@ Wenn der optionale TCS nicht genutzt wird, werden wendet der TPG Standard Parame
 \label{subsubsec:geometry_shader}
 Ein weiterer optionaler Schritt in der traditionellen Grafikpipeline ist der \textit{Geometry Shader}.
 Er bekommt eine Primitive als Input, und kann keine oder auch mehr Primitiven ausgeben, als er bekommen hat.
-Die Fähigkeit zusätzliche Vertices zu generieren ist auch das, was den Geometry Shader besonders macht.
+Die Fähigkeit zusätzliche Primitiven zu generieren ist auch das, was den Geometry Shader besonders macht.
 Der Geometry Shader bekommt seinen Input entweder vom TES, oder, wenn die Tessellation Stage keine Verwendung findet, vom Vertex Shader und leitet seine Ausgabe an den Fragment Shader weiter.
 Um Bandbreite zwischen CPU und GPU zu sparen, kann ein Geometry Shader ein Dreiecksnetz mit wenigen Dreiecken erweitern und dieses so detaillierter gestalten.
 Ähnlich wie bei der Tessellation, die auf \textit{Patches} von Primitiven agiert, verarbeitet der Geometry Shader die Primitiven an sich \cite{Chang2014}.
@@ -153,7 +154,7 @@ Zusätzlich müssen noch Materialeigenschaften beachtet werden.
 Alternativ kann jeder Vertex auch seinen eigenen Farbwert besitzen. \newline
 
 Um der Szene mehr Realismus beizusteuern, kann im Fragment Shader auch ein Lichtmodell implementiert werden.
-Beispiele dafür sind \textit{Flat shading}, \textit{Gouraud shading} und \textit{Phong shading}.
+Beispiele dafür sind \textit{ambient}, \textit{specular} und \textit{diffuse lighting}.
 Für die Lichtberechnung werden die Oberflächen-Normalen benötigt.
 Diese sind entweder in einem Dreiecksnetz gegeben, oder müssen noch berechnet werden.
 Ausgabe des Pixel Shaders ist ein Fragment.
@@ -190,7 +191,7 @@ SVGroupThreadID und SVGroupID.
 Die GroupID koordiniert die von der Dispatch Methode definierte Anzahl an Threadgroups.
 
 Die GroupID spannt eine bestimmte Anzahl an Threads auf, die vorher im Compute Shader festgelegt wurde.
-Jedem dieser Threads einer Threadgroup wird eine GroupThreadID zugeteilt.
+Jedem dieser Threads einer Threadgroup wird eine GroupThreadID zugeteilt \cite{Mic2021b}.
 
 \subsection{Quantisierung von Gleitkommazahlen}
 \label{subsec:quantisierung}
@@ -213,7 +214,7 @@ Das Vorzeichenbit entscheidet anschließend, ob die Zahl positiv oder negativ be
 \begin{figure}[htb]
   \centering  
   \includegraphics[scale=0.50]{Bilder/number_representation.png}
-  \caption[Repräsentation einer Zahl]{\textbf{Repräsentation einer Zahl} Die Abbildung zeigt die Zusammensetzung von Ganz- und Gleitkommazahlen. Die Abbildung stammt aus dem Foliensatz \url{https://media.nips.cc/Conferences/2015/tutorialslides/Dally-NIPS-Tutorial-2015.pdf}}
+  \caption[Die Repräsentation von Gleitkommazahlen und Ganzzahlen]{\textbf{Die Repräsentation von Gleitkommazahlen und Ganzzahlen} Die Abbildung zeigt die Zusammensetzung von Ganz- und Gleitkommazahlen. Die Abbildung stammt aus dem Foliensatz \url{https://media.nips.cc/Conferences/2015/tutorialslides/Dally-NIPS-Tutorial-2015.pdf}}
   \label{fig:number_representation}
 \end{figure}
 
@@ -271,7 +272,7 @@ Maximal wird der Wert, wenn eine Gleichverteilung vorherrscht, also wenn die Wah
 Eine geringe Entropie kann erzielt werden, wenn die Auftrittswahrscheinlichkeiten stark voneinander variieren, wie es bei einer Glockenkurve der Fall ist. 
 
 \subsubsection*{Entscheidungsgehalt}
-Um den Entscheidungsgehalt einer Quelle zu berechnen, wird der Logarithmus Duales auf die Anzahl der Symbole angewendet:
+Um den Entscheidungsgehalt einer Quelle zu berechnen, wird der Logarithmus dualis auf die Anzahl der Symbole angewendet:
 \begin{equation*}
 H_0 = \log_2 (K).
 \end{equation*}
