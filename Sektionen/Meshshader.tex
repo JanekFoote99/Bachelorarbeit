@@ -42,36 +42,34 @@ Jede Workgroup wird wiederum in Threads unterteilt \cite{Kubisch2018}.
 
 \subsection{Meshlets}
 \label{subsec:meshlets}
-Um die neuartigen Shader für das Rendering zu verwenden, wird empfohlen, das gesamte Mesh in kleinere Subsets, sogenannte Meshlets, zu unterteilen. 
-Die traditionelle Grafikpipeline verarbeitet die Daten des Dreiecksnetzes in serieller Manier. 
-Dadurch kommt es jedoch zu Bottlenecks.
+Um die neuartigen Shader für das Rendering zu verwenden, muss zunächst das gesamte Mesh in kleinere Subsets, sogenannte Meshlets, unterteilen werden. 
 In der traditionellen Pipeline werden Vertex und Primitiven vor der Vertex Shader Stage zugeschnitten und in kleine Clustern verarbeitet.
 Dazu wird der Primitive Distributor vor der Vertex Shader Stage aufgerufen.
 Dieser liest die Daten des Index-Buffers und generiert dementsprechend möglichst performant diese Cluster an Daten.
-Der Schritt des Primitive Distributor ist jedoch eine fixed-function Stage der Grafikpipeline, wodurch der Entwickler keinen direkten Zugriff hat.
+Der Schritt des Primitive Distributor ist jedoch eine fixed-function Stage der Grafikpipeline, worauf der Entwickler keinen direkten Zugriff hat.
 Das hat zur Folge, dass die Cluster nicht auf die Bedürfnisse des Entwicklers und dessen Implementierung angepasst werden können.
 Zuzüglich werden die Cluster zu jedem Frame, bzw. vor jedem Aufruf der Pipeline neu generiert.
 Dieser Schritt ist redundant, sollte das Dreiecksnetz zur Laufzeit unverändert bleiben \cite{Carvalho2022}, \cite{Kubisch2018}. \newline
 
-Wie beim Compute Shader ist der Input des Mesh Shaders anders als bei der traditionellen Grafikpipeline nicht mehr festgelegt.
+Anders als bei der traditionellen Grafikpipeline ist der Input eines Mesh Shaders nicht mehr festgelegt.
 Dadurch kann der Entwickler seine eigenen Implementationen zur Generierung von Meshlets verwenden.
-Anders als bei der herkömmlichen Grafikpipeline werden Meshlets auf CPU Ebene erstellt.
-Dazu werden Vertex Positionen und Indizes benötigt.
+Das ermöglicht es, die Generierung von Meshlets auf die CPU auszulagern.
+Um das zu ermöglichen, werden die Vertices und Indizes des Dreiecksnetzes benötigt.
 Die Anzahl der Vertices und Primitiven muss im Vorfeld festgelegt werden.
 Die maximale Größe der Meshlets ist abhängig von der verwendeten GPU.
 So wird im NVIDIA Blogpost \textit{Introduction to Turing Mesh Shaders} eine maximale Anzahl an Vertices von 64, und Primitiven von 126 empfohlen.
 Die 126 ist bewusst keine Zweierpotenz, da 4 Byte für die Anzahl der Primitiven des Meshlets verwendet werden.
-Zur Vermeidung der Anforderung eines zusätzlichen Speicherblocks werden diese 4 Byte Speicher freigelassen \cite{Kubisch2018}. \newline
+Um das Anlegen eines weiteren Speicherblocks zu vermeiden, wird in diesem Blogpost empfohlen, diese 4 Byte Speicher frei zu lassen \cite{Kubisch2018}. \newline
 
 Arseny Kapoulkine hat verschiedene Meshletgrößen miteinander verglichen.
 Er ist zu dem Schluss gekommen, dass 64 Vertices und 84 Primitives am effizientesten sind, insbesondere dann, wenn im Task Shader Culling auf die einzelnen Meshlets angewendet wird.
-Des Weiteren ist die Empfehlung des Blogposts nach eigenen Tests zwar ein guter Maßstab, jedoch wird im Durchschnitt viel Speicher des Primitiven Buffers ungenutzt bleiben, da die 126 Primitiven mit 64 Vertices nie erreicht werden \cite{Kapoulkine2023}.
+Des Weiteren ist die Empfehlung des Blogposts nach eigenen Tests zwar ein guter Maßstab, jedoch wird im Durchschnitt viel Speicher des Primitiven Buffers ungenutzt bleiben, da die 126 Primitiven mit 64 Vertices nie erreicht werden.
+Ein Meshlet bei dieser Größe besitzt meist eine Anzahl von maximal 100 Primitiven \cite{Kapoulkine2023}.
 
-\subsection{Implementierung eines Standard Mesh Shaders}
+\subsection{Verfahren zur Generierung von Meshlets}
 \label{subsec:standard_meshshaderimpl}
 Wie im vorherigen Unterkapitel angekündigt, muss das Dreiecksnetz auf der CPU zu Meshlets geschnitten werden. 
-Dazu wurde in dieser Arbeit der Meshoptimizer von Zeux verwendet \cite{Zeux}. 
-[Implementierung von Zeux beschreiben]
+Dazu wurde in dieser Arbeit der Meshoptimizer von Zeux verwendet \cite{Zeux}.
 Die Funktion \glqq meshopt\_buildMeshlets\grqq\ nimmt als Eingabeparameter die maximale Anzahl an Vertices und Primitiven (Kap.\ref{subsec:meshlets}), die Vertex und Index Daten sowie drei leere Buffer.
 Der Buffer \textit{meshlet\_indices} wird die neuen Index Daten enthalten, mit denen die Primitiven berechnet werden können.
 Der \textit{meshlet\_vertices} Buffer beinhaltet die einzigartigen Vertices des Dreiecksnetzes (Kap~\ref{subsec:local_vertex_buffers}).
@@ -119,8 +117,9 @@ Auffällig ist, dass die obere Schranke der Werte, die die Indizes enthalten, be
 Der benötigte Speicher eines einzelnen Indizes wird dadurch drastisch reduziert.
 Für einen Index wurden ursprünglich 4-Byte Speicher benötigt.
 Für die \textit{meshlet\_indices} werden in dem Fall von \textit{\^{V}} = 128 und \textit{\^{I}} = 256 höchstens 8 Bit für die Repräsentation eines Index benötigt.
+Sehr viel größere Meshlets werden nicht erstellt, wodurch ein Maximum von 10 Bit pro Index angenommen werden kann.
 Diese Auffälligkeit kann sich zunutze gemacht werden, indem eine Primitive bzw. drei Indizes in ein 4-Byte Integer verpackt werden.
-Dadurch kann 66 \% des Speicherbedarfs für den Index-Buffer gespart werden.
+Dadurch kann rund $\frac{2}{3}$ des Speicherbedarfs für den Index-Buffer gespart werden.
 
 Mit den Informationen der originalen Vertex Daten und der drei neu generierten Buffer \textit{meshlet\_indices}, \textit{meshlet\_vertices} und \textit{meshlets}, kann nun der Mesh Shader gefüttert werden.
 Zunächst müssen die während des Build-Vorgangs kompilierten Shader gelesen werden.

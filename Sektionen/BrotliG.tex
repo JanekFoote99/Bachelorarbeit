@@ -136,7 +136,7 @@ Mithilfe dieser Eigenschaft verbrauchen Symbole, die häufig auftreten, weniger 
 \label{subsubsec:konstruktion_huffman}
 Zur Konstruktion eines Huffman Codes wird ein Binärbaum generiert.
 Die zu kodierenden Symbole werden als Blätter des Baumes betrachtet.
-Der Baum wird sozusagen von \glqq unten nach oben\grqq\ bzw. von \glqq Blätter nach Wurzel\grqq aufgebaut. \newline
+Der Baum wird sozusagen von \textit{unten nach oben} bzw. von \textit{Blätter nach Wurzel} aufgebaut. \newline
 In jedem Schritt werden die zwei Symbole oder Knoten mit der geringsten Auftrittswahrscheinlichkeit zu einem neuen Knoten verbunden.
 Die Auftrittswahrscheinlichkeit des neu erstellten Knotens ist die Summe der Auftrittswahrscheinlichkeiten der verbundenen Symbole/Knoten.
 Sobald die Wurzel des Baumes erreicht ist, also die Auftrittswahrscheinlichkeit bei 1 liegt, ist die Huffman-Kodierung abgeschlossen.
@@ -212,12 +212,8 @@ Wenn in diesem Fall eine Quelle, wie beispielsweise ein Alphabet betrachtet, ist
 \Delta R_0 = H_0 - H(X)
 \end{equation*}
 \begin{equation*}
-H_0 = \sum_{i=1}^{n} p_i \cdot \log_2{p_i} , \quad p_i = \frac{1}{n} \ \forall i
+H_0 = \sum_{i=1}^{n} p_i \cdot \log_2{p_i}
 \end{equation*}
-\begin{equation*}
-H_0 = \sum_{i=1}^{n} p_i \cdot \log_2{p_i} , \quad p_i = \frac{1}{n} \ \forall i
-\end{equation*}
-
 Die Aufgabe der Huffman-Kodierung ist die Minimierung der \textit{Codierungsredundanz}.
 
 Im Gegensatz dazu profitiert die Huffman-Kodierung enorm von einer ungleichen Verteilung der Symbole, bei der bestimmte Symbole deutlich häufiger auftreten als andere. 

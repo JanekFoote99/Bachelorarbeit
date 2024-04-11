@@ -127,7 +127,7 @@ Diese unterteilt die Patches abhängig von den Berechnungen der TCS.
 
 \subsubsection*{Tessellation Evaluation Shader (TES)}
 Das Vorhandensein des \textit{Tessellation Evaluation Shaders} bestimmt, ob die Tessellation Stage ausgeführt wird.
-Dies wird für jeden einzigartigen Vertex durchgeführt, der in der Tessellation Stage erzeugt wird.
+Der Shader wird für jeden einzigartigen Vertex durchgeführt, der in der Tessellation Stage erzeugt wird.
 Die berechneten Koordinaten des TPG werden in dieser Shader Stage interpoliert, um die neuen Vertices zu generieren.
 Abschließend werden die aus der Subdivision berechneten Vertices ausgegeben. 
 Wenn der optionale TCS nicht genutzt wird, werden wendet der TPG Standard Parameter für die Berechnung an \cite{cozzi2012opengl}\cite{Carvalho2022}.
